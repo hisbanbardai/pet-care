@@ -2,6 +2,7 @@ import Image from "next/image";
 import image from "../../../public/petsoft-preview.png";
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -19,8 +20,12 @@ export default function HomePage() {
           access for $299.
         </p>
         <div className="mt-10 space-x-3">
-          <Button>Get started</Button>
-          <Button>Login</Button>
+          <Button asChild>
+            <Link href={"/signup"}> Get started</Link>
+          </Button>
+          <Button asChild variant={"secondary"}>
+            <Link href={"/signin"}> Log in</Link>
+          </Button>
         </div>
       </div>
     </main>
