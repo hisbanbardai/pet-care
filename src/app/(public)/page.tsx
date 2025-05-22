@@ -1,6 +1,7 @@
 import Image from "next/image";
 import image from "../../../public/petsoft-preview.png";
 import Logo from "@/components/Logo";
+import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   return (
@@ -17,7 +18,10 @@ export default function HomePage() {
           Use PetCare to easily keep track of pets under your care. Get lifetime
           access for $299.
         </p>
-        <div className="mt-10"></div>
+        <div className="mt-10 space-x-3">
+          <Button>Get started</Button>
+          <Button>Login</Button>
+        </div>
       </div>
     </main>
   );
