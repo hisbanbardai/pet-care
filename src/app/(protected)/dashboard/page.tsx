@@ -1,4 +1,5 @@
 import Branding from "@/components/Branding";
+import ContentWrapper from "@/components/ContentWrapper";
 import PetDetails from "@/components/PetDetails";
 import PetList from "@/components/PetList";
 import SearchForm from "@/components/SearchForm";
@@ -14,8 +15,14 @@ export default function DashboardPage() {
 
       <div>
         <SearchForm />
-        <PetList />
-        <PetDetails />
+
+        <ContentWrapper>
+          <PetList />
+        </ContentWrapper>
+
+        <ContentWrapper>
+          <PetDetails />
+        </ContentWrapper>
       </div>
     </main>
   );
