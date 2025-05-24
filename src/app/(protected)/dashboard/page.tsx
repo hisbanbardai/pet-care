@@ -13,18 +13,18 @@ export default function DashboardPage() {
         <Stats />
       </div>
 
-      <div className="grid grid-rows-[45px_1fr] grid-cols-[1fr_2fr] h-[500px] gap-4">
-        <div className="col-start-1 col-span-1 row-start-1 row-span-1">
+      <div className="grid md:grid-rows-[45px_1fr] grid-rows-[45px_300px_500px] grid-cols-1 md:grid-cols-[1fr_2fr] md:h-[600px] gap-4">
+        <div className="md:col-start-1 md:col-span-1 md:row-start-1 md:row-span-1">
           <SearchForm />
         </div>
 
-        <div className="col-start-1 col-span-1 row-start-2 row-span-1">
+        <div className="md:col-start-1 md:col-span-1 md:row-start-2 md:row-span-1">
           <ContentWrapper>
             <PetList />
           </ContentWrapper>
         </div>
 
-        <div className="col-start-2 col-span-1 row-start-1 row-span-full">
+        <div className="md:col-start-2 md:col-span-1 md:row-start-1 md:row-span-full">
           <ContentWrapper>
             <PetDetails />
           </ContentWrapper>
