@@ -4,12 +4,8 @@ import usePetsContext from "@/hooks/usePetsContext";
 import { TPet } from "@/lib/types";
 import Image from "next/image";
 
-type TPetListProps = {
-  pets: TPet[];
-};
-
 export default function PetList() {
-  const { pets } = usePetsContext();
+  const { pets }: { pets: TPet[] } = usePetsContext();
 
   return (
     <ul className="w-full bg-white border-b border-black/[0.08]">

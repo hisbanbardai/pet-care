@@ -1,11 +1,25 @@
 "use client";
 
+import { TPet } from "@/lib/types";
 import { createContext, useState } from "react";
 
-export const PetsContext = createContext(null);
+type TPetsContextProviderProps = {
+  data: TPet[];
+  children: React.ReactNode;
+};
 
-export default function PetsContextProvider({ data, children }) {
-  const [selectedPetId, setSelectedPetId] = useState(null);
+type TPetsContext = {
+  selectedPetId: string | null;
+  pets: TPet[];
+} | null;
+
+export const PetsContext = createContext<TPetsContext>(null);
+
+export default function PetsContextProvider({
+  data,
+  children,
+}: TPetsContextProviderProps) {
+  const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
   const [pets, setPets] = useState(data);
 
   return (

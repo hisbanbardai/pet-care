@@ -2,6 +2,7 @@ import AppFooter from "@/components/AppFooter";
 import AppHeader from "@/components/AppHeader";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import PetsContextProvider from "@/contexts/PetsContextProvider";
+import { TPet } from "@/lib/types";
 import React from "react";
 
 export default async function ProtectedPagesLayout({
@@ -17,7 +18,7 @@ export default async function ProtectedPagesLayout({
     throw new Error("Could not fetch pets data");
   }
 
-  const data = await response.json();
+  const data: TPet[] = await response.json();
 
   return (
     <>
