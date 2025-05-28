@@ -2,6 +2,7 @@ import AppFooter from "@/components/AppFooter";
 import AppHeader from "@/components/AppHeader";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import PetsContextProvider from "@/contexts/PetsContextProvider";
+import SearchContextProvider from "@/contexts/SearchContextProvider";
 import { TPet } from "@/lib/types";
 import React from "react";
 
@@ -25,7 +26,9 @@ export default async function ProtectedPagesLayout({
       <BackgroundPattern />
       <div className="max-w-[1050px] mx-auto px-4 flex flex-col min-h-screen">
         <AppHeader />
-        <PetsContextProvider data={data}>{children}</PetsContextProvider>
+        <SearchContextProvider>
+          <PetsContextProvider data={data}>{children}</PetsContextProvider>
+        </SearchContextProvider>
         <AppFooter />
       </div>
     </>
