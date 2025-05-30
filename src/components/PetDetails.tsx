@@ -3,6 +3,8 @@
 import usePetsContext from "@/hooks/usePetsContext";
 import { TPet } from "@/lib/types";
 import Image from "next/image";
+import { Button } from "./ui/button";
+import PetActionButton from "./PetActionButton";
 
 export default function PetDetails() {
   const { selectedPet } = usePetsContext();
@@ -42,6 +44,11 @@ function TopBar({ selectedPet }: { selectedPet: TPet }) {
       />
 
       <h2 className="font-semibold text-3xl ml-5">{selectedPet?.name}</h2>
+
+      <div className="space-x-2 ml-auto">
+        <PetActionButton actionType="edit" />
+        <PetActionButton actionType="checkout" />
+      </div>
     </div>
   );
 }

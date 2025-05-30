@@ -1,5 +1,6 @@
 import Branding from "@/components/Branding";
 import ContentWrapper from "@/components/ContentWrapper";
+import PetActionButton from "@/components/PetActionButton";
 import PetDetails from "@/components/PetDetails";
 import PetList from "@/components/PetList";
 import SearchForm from "@/components/SearchForm";
@@ -18,9 +19,12 @@ export default function DashboardPage() {
           <SearchForm />
         </div>
 
-        <div className="md:col-start-1 md:col-span-1 md:row-start-2 md:row-span-1">
+        <div className="relative md:col-start-1 md:col-span-1 md:row-start-2 md:row-span-1">
           <ContentWrapper>
             <PetList />
+            <div className="absolute bottom-4 right-4">
+              <PetActionButton actionType="add" />
+            </div>
           </ContentWrapper>
         </div>
 
