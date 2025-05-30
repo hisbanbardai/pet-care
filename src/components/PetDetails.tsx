@@ -3,7 +3,6 @@
 import usePetsContext from "@/hooks/usePetsContext";
 import { TPet } from "@/lib/types";
 import Image from "next/image";
-import { Button } from "./ui/button";
 import PetActionButton from "./PetActionButton";
 
 export default function PetDetails() {
@@ -33,6 +32,8 @@ function EmptyView() {
 }
 
 function TopBar({ selectedPet }: { selectedPet: TPet }) {
+  const { handleCheckoutPet } = usePetsContext();
+
   return (
     <div className="flex items-center bg-white px-8 py-5 border-b border-light">
       <Image
@@ -47,7 +48,7 @@ function TopBar({ selectedPet }: { selectedPet: TPet }) {
 
       <div className="space-x-2 ml-auto">
         <PetActionButton actionType="edit" />
-        <PetActionButton actionType="checkout" />
+        <PetActionButton onClick={handleCheckoutPet} actionType="checkout" />
       </div>
     </div>
   );

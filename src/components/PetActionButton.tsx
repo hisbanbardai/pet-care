@@ -3,9 +3,13 @@ import { Button } from "./ui/button";
 
 type TPetActionButtonProps = {
   actionType: "add" | "edit" | "checkout";
+  onClick?: () => void;
 };
 
-export default function PetActionButton({ actionType }: TPetActionButtonProps) {
+export default function PetActionButton({
+  actionType,
+  onClick,
+}: TPetActionButtonProps) {
   if (actionType === "add") {
     return (
       <Button size={"icon"}>
@@ -19,6 +23,10 @@ export default function PetActionButton({ actionType }: TPetActionButtonProps) {
   }
 
   if (actionType === "checkout") {
-    return <Button variant={"secondary"}>Checkout</Button>;
+    return (
+      <Button onClick={onClick} variant={"secondary"}>
+        Checkout
+      </Button>
+    );
   }
 }
