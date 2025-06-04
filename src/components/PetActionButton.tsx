@@ -1,5 +1,7 @@
 import { PlusIcon } from "lucide-react";
 import { Button } from "./ui/button";
+import { Dialog } from "./ui/dialog";
+import PetForm from "./PetForm";
 
 type TPetActionButtonProps = {
   actionType: "add" | "edit" | "checkout";
@@ -12,14 +14,24 @@ export default function PetActionButton({
 }: TPetActionButtonProps) {
   if (actionType === "add") {
     return (
-      <Button size={"icon"}>
-        <PlusIcon className="size-6" />
-      </Button>
+      <Dialog>
+        <PetForm title={"Add a pet"}>
+          <Button size={"icon"}>
+            <PlusIcon className="size-6" />
+          </Button>
+        </PetForm>
+      </Dialog>
     );
   }
 
   if (actionType === "edit") {
-    return <Button variant={"secondary"}>Edit</Button>;
+    return (
+      <Dialog>
+        <PetForm title={"Edit pet"}>
+          <Button variant={"secondary"}>Edit</Button>
+        </PetForm>
+      </Dialog>
+    );
   }
 
   if (actionType === "checkout") {

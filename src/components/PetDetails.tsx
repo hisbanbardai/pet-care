@@ -46,7 +46,7 @@ function TopBar({ selectedPet }: { selectedPet: TPet }) {
 
       <h2 className="font-semibold text-3xl ml-5">{selectedPet?.name}</h2>
 
-      <div className="space-x-2 ml-auto">
+      <div className="space-x-2 ml-auto flex">
         <PetActionButton actionType="edit" />
         <PetActionButton onClick={handleCheckoutPet} actionType="checkout" />
       </div>
