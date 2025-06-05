@@ -19,12 +19,14 @@ type TPetFormProps = {
   children: React.ReactNode;
   title: string;
   buttonLabel: string;
+  onFormSubmission: () => void;
 };
 
 export default function PetForm({
   children,
   title,
   buttonLabel,
+  onFormSubmission,
 }: TPetFormProps) {
   const { handleAddPet } = usePetsContext();
 
@@ -43,6 +45,9 @@ export default function PetForm({
 
     //we should not add the id here because we are only getting the form data. We should id in the PetContextProvider
     handleAddPet(newPet);
+
+    //this function below will determine what to do after the form has been submitted
+    onFormSubmission();
   };
 
   return (
