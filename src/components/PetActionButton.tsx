@@ -15,7 +15,7 @@ export default function PetActionButton({
   if (actionType === "add") {
     return (
       <Dialog>
-        <PetForm title={"Add a pet"}>
+        <PetForm title={"Add a new pet"} buttonLabel={"Add a new pet"}>
           <Button size={"icon"}>
             <PlusIcon className="size-6" />
           </Button>
@@ -27,7 +27,7 @@ export default function PetActionButton({
   if (actionType === "edit") {
     return (
       <Dialog>
-        <PetForm title={"Edit pet"}>
+        <PetForm title={"Edit pet"} buttonLabel={"Edit a pet"}>
           <Button variant={"secondary"}>Edit</Button>
         </PetForm>
       </Dialog>
