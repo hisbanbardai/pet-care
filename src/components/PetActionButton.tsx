@@ -9,7 +9,6 @@ import { useState } from "react";
 type TPetActionButtonProps = {
   actionType: "add" | "edit" | "checkout";
   onClick?: () => void;
-  onFormSubmission: () => void;
 };
 
 export default function PetActionButton({
@@ -25,6 +24,7 @@ export default function PetActionButton({
           title={"Add a new pet"}
           buttonLabel={"Add a new pet"}
           onFormSubmission={() => setIsFormOpen(false)}
+          actionType={actionType}
         >
           <Button size={"icon"}>
             <PlusIcon className="size-6" />
@@ -41,6 +41,7 @@ export default function PetActionButton({
           title={"Edit pet"}
           buttonLabel={"Edit a pet"}
           onFormSubmission={() => {}}
+          actionType={actionType}
         >
           <Button variant={"secondary"}>Edit</Button>
         </PetForm>
