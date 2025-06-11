@@ -36,11 +36,11 @@ export default function PetActionButton({
 
   if (actionType === "edit") {
     return (
-      <Dialog>
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <PetForm
           title={"Edit pet"}
           buttonLabel={"Edit a pet"}
-          onFormSubmission={() => {}}
+          onFormSubmission={() => setIsFormOpen(false)}
           actionType={actionType}
         >
           <Button variant={"secondary"}>Edit</Button>

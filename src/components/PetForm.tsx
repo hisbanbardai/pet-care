@@ -30,7 +30,7 @@ export default function PetForm({
   actionType,
   onFormSubmission,
 }: TPetFormProps) {
-  const { handleAddPet, selectedPet } = usePetsContext();
+  const { handleAddPet, selectedPet, handleEditPet } = usePetsContext();
 
   const handleFormSubmit = function (e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,9 +45,16 @@ export default function PetForm({
       notes: formData.get("notes") as string,
     };
 
-    //we should not add the id here because we are only getting the form data. We should id in the PetContextProvider
-    handleAddPet(newPet);
+    if (actionType === "add") {
+      //we should not add the id here because we are only getting the form data. We should id in the PetContextProvider
+      handleAddPet(newPet);
+    }
 
+    if (actionType === "edit") {
+      if (selectedPet) {
+        handleEditPet(selectedPet.id, newPet);
+      }
+    }
     //this function below will determine what to do after the form has been submitted
     onFormSubmission();
   };
