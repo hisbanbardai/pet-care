@@ -15,3 +15,13 @@ datasource db {
 }
 
 
+model Pet {
+  id String @id @default(uuid())
+  name String
+  ownerName String
+  imageUrl String
+  age Int
+  notes String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
