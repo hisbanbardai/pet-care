@@ -1,5 +1,6 @@
 "use client";
 
+import { addPet } from "@/actions/actions";
 import { TPet } from "@/lib/types";
 import { createContext, useState } from "react";
 
@@ -43,8 +44,10 @@ export default function PetsContextProvider({
     setSelectedPetId(null);
   }
 
-  function handleAddPet(pet: Omit<TPet, "id">) {
-    setPets((prev) => [...prev, { ...pet, id: Date.now().toString() }]);
+  async function handleAddPet(pet: Omit<TPet, "id">) {
+    // setPets((prev) => [...prev, { ...pet, id: Date.now().toString() }]);
+
+    await addPet(pet);
   }
 
   function handleEditPet(petId: string, pet: Omit<TPet, "id">) {
