@@ -14,6 +14,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import usePetsContext from "@/hooks/usePetsContext";
+import { addPet } from "@/actions/actions";
 
 type TPetFormProps = {
   children: React.ReactNode;
@@ -32,38 +33,38 @@ export default function PetForm({
 }: TPetFormProps) {
   const { handleAddPet, selectedPet, handleEditPet } = usePetsContext();
 
-  const handleFormSubmit = function (e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const newPet = {
-      name: formData.get("name") as string,
-      ownerName: formData.get("ownerName") as string,
-      imageUrl:
-        (formData.get("imageUrl") as string) ||
-        "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-      age: +(formData.get("age") as string),
-      notes: formData.get("notes") as string,
-    };
+  // const handleFormSubmit = function (e: FormEvent<HTMLFormElement>) {
+  //   e.preventDefault();
+  //   const formData = new FormData(e.currentTarget);
+  //   const newPet = {
+  //     name: formData.get("name") as string,
+  //     ownerName: formData.get("ownerName") as string,
+  //     imageUrl:
+  //       (formData.get("imageUrl") as string) ||
+  //       "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+  //     age: +(formData.get("age") as string),
+  //     notes: formData.get("notes") as string,
+  //   };
 
-    if (actionType === "add") {
-      //we should not add the id here because we are only getting the form data. We should id in the PetContextProvider
-      handleAddPet(newPet);
-    }
+  //   if (actionType === "add") {
+  //     //we should not add the id here because we are only getting the form data. We should id in the PetContextProvider
+  //     handleAddPet(newPet);
+  //   }
 
-    if (actionType === "edit") {
-      if (selectedPet) {
-        handleEditPet(selectedPet.id, newPet);
-      }
-    }
-    //this function below will determine what to do after the form has been submitted
-    onFormSubmission();
-  };
+  //   if (actionType === "edit") {
+  //     if (selectedPet) {
+  //       handleEditPet(selectedPet.id, newPet);
+  //     }
+  //   }
+  //   //this function below will determine what to do after the form has been submitted
+  //   onFormSubmission();
+  // };
 
   return (
     <>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
-        <form onSubmit={handleFormSubmit}>
+        <form action={addPet}>
           <DialogHeader>
             <DialogTitle className="font-bold text-xl">{title}</DialogTitle>
             <DialogDescription></DialogDescription>

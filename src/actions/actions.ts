@@ -1,11 +1,18 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { TPet } from "@/lib/types";
 
-export async function addPet(pet: Omit<TPet, "id">) {
+export async function addPet(formData: FormData) {
   await prisma.pet.create({
-    data: pet,
+    data: {
+      name: formData.get("name") as string,
+      ownerName: formData.get("ownerName") as string,
+      imageUrl:
+        (formData.get("imageUrl") as string) ||
+        "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+      age: parseInt(formData.get("age") as string),
+      notes: formData.get("notes") as string,
+    },
   });
 }
 
