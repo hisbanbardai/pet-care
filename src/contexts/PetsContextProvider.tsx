@@ -30,6 +30,7 @@ export default function PetsContextProvider({
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
   //we are removing the below state because previously we would fetch the data of the pets and set it as the initial data of the state (the state would only use this data as initial data the first time) and everytime we used to add a new pet we would just update the state using setPets but that is just updating on the client side. Now we are fetching the pets from the database and when we add a new pet we are creating it in the database too so we need to directly use the data that we are fetching from the database
+
   // const [pets, setPets] = useState(data);
 
   //derived state
