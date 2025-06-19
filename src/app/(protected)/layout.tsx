@@ -1,6 +1,7 @@
 import AppFooter from "@/components/AppFooter";
 import AppHeader from "@/components/AppHeader";
 import BackgroundPattern from "@/components/BackgroundPattern";
+import { Toaster } from "@/components/ui/sonner";
 import PetsContextProvider from "@/contexts/PetsContextProvider";
 import SearchContextProvider from "@/contexts/SearchContextProvider";
 import prisma from "@/lib/prisma";
@@ -34,6 +35,8 @@ export default async function ProtectedPagesLayout({
         </SearchContextProvider>
         <AppFooter />
       </div>
+
+      <Toaster position="top-right" />
     </>
   );
 }

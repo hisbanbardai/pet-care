@@ -16,6 +16,7 @@ import { Textarea } from "./ui/textarea";
 import usePetsContext from "@/hooks/usePetsContext";
 import { addPet } from "@/actions/actions";
 import PetFormSubmitBtn from "./PetFormSubmitBtn";
+import { toast } from "sonner";
 
 type TPetFormProps = {
   children: React.ReactNode;
@@ -63,7 +64,13 @@ export default function PetForm({
 
   async function handleFormAction(formData: FormData) {
     //server action
-    await addPet(formData);
+    const error = await addPet(formData);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
     onFormSubmission();
   }
   //when you pass a function reference to the form action, it receives the formData object
