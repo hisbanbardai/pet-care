@@ -15,6 +15,7 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import usePetsContext from "@/hooks/usePetsContext";
 import { addPet } from "@/actions/actions";
+import PetFormSubmitBtn from "./PetFormSubmitBtn";
 
 type TPetFormProps = {
   children: React.ReactNode;
@@ -60,11 +61,18 @@ export default function PetForm({
   //   onFormSubmission();
   // };
 
+  async function handleFormAction(formData: FormData) {
+    //server action
+    await addPet(formData);
+    onFormSubmission();
+  }
+  //when you pass a function reference to the form action, it receives the formData object
+
   return (
     <>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
-        <form action={addPet}>
+        <form action={handleFormAction}>
           <DialogHeader>
             <DialogTitle className="font-bold text-xl">{title}</DialogTitle>
             <DialogDescription></DialogDescription>
@@ -131,9 +139,7 @@ export default function PetForm({
           </div>
 
           <DialogFooter>
-            <div className="mt-5">
-              <Button type="submit">{buttonLabel}</Button>
-            </div>
+            <PetFormSubmitBtn buttonLabel={buttonLabel} />
           </DialogFooter>
         </form>
       </DialogContent>
