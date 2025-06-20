@@ -3,6 +3,10 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
+export async function fetchPets() {
+  return await prisma.pet.findMany();
+}
+
 export async function addPet(formData: FormData) {
   try {
     await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -52,6 +56,18 @@ export async function editPet(petId: string, formData: FormData) {
   revalidatePath("/", "layout");
 }
 
-export async function fetchPets() {
-  return await prisma.pet.findMany();
+export async function checkoutPet(petId: string) {
+  try {
+    await prisma.pet.delete({
+      where: {
+        id: petId,
+      },
+    });
+  } catch (error) {
+    return {
+      message: "Could not delete the pet",
+    };
+  }
+
+  revalidatePath("/", "layout");
 }

@@ -4,6 +4,7 @@ import usePetsContext from "@/hooks/usePetsContext";
 import { TPet } from "@/lib/types";
 import Image from "next/image";
 import PetActionButton from "./PetActionButton";
+import { checkoutPet } from "@/actions/actions";
 
 export default function PetDetails() {
   const { selectedPet } = usePetsContext();
@@ -48,7 +49,10 @@ function TopBar({ selectedPet }: { selectedPet: TPet }) {
 
       <div className="space-x-2 ml-auto flex">
         <PetActionButton actionType="edit" />
-        <PetActionButton onClick={handleCheckoutPet} actionType="checkout" />
+        <PetActionButton
+          onClick={async () => await checkoutPet(selectedPet.id)}
+          actionType="checkout"
+        />
       </div>
     </div>
   );
