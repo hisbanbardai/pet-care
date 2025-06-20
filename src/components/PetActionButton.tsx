@@ -9,11 +9,13 @@ import { useState } from "react";
 type TPetActionButtonProps = {
   actionType: "add" | "edit" | "checkout";
   onClick?: () => void;
+  disabled?: boolean;
 };
 
 export default function PetActionButton({
   actionType,
   onClick,
+  disabled,
 }: TPetActionButtonProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -51,7 +53,7 @@ export default function PetActionButton({
 
   if (actionType === "checkout") {
     return (
-      <Button onClick={onClick} variant={"secondary"}>
+      <Button disabled={disabled} onClick={onClick} variant={"secondary"}>
         Checkout
       </Button>
     );

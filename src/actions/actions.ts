@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { sleep } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
 export async function fetchPets() {
@@ -9,7 +10,7 @@ export async function fetchPets() {
 
 export async function addPet(formData: FormData) {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await sleep(3000);
 
     await prisma.pet.create({
       data: {
@@ -33,6 +34,8 @@ export async function addPet(formData: FormData) {
 
 export async function editPet(petId: string, formData: FormData) {
   try {
+    await sleep(300);
+
     await prisma.pet.update({
       where: {
         id: petId,
@@ -58,6 +61,8 @@ export async function editPet(petId: string, formData: FormData) {
 
 export async function checkoutPet(petId: string) {
   try {
+    await sleep(3000);
+
     await prisma.pet.delete({
       where: {
         id: petId,
