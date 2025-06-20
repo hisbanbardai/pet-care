@@ -1,11 +1,10 @@
+import { fetchPets } from "@/actions/actions";
 import AppFooter from "@/components/AppFooter";
 import AppHeader from "@/components/AppHeader";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { Toaster } from "@/components/ui/sonner";
 import PetsContextProvider from "@/contexts/PetsContextProvider";
 import SearchContextProvider from "@/contexts/SearchContextProvider";
-import prisma from "@/lib/prisma";
-import { TPet } from "@/lib/types";
 import React from "react";
 
 export default async function ProtectedPagesLayout({
@@ -23,7 +22,8 @@ export default async function ProtectedPagesLayout({
 
   // const data: TPet[] = await response.json();
 
-  const pets = await prisma.pet.findMany();
+  //server action
+  const pets = await fetchPets();
 
   return (
     <>
