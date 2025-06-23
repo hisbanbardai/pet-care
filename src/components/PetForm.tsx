@@ -63,26 +63,42 @@ export default function PetForm({
   // };
 
   async function handleFormAction(formData: FormData) {
-    //server action
-    if (actionType === "add") {
-      const error = await addPet(formData);
+    onFormSubmission();
 
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
+    const pet = {
+      name: formData.get("name") as string,
+      ownerName: formData.get("ownerName") as string,
+      imageUrl:
+        (formData.get("imageUrl") as string) ||
+        "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+      age: parseInt(formData.get("age") as string),
+      notes: formData.get("notes") as string,
+    };
+
+    if (actionType === "add") {
+      //server action
+      // const error = await addPet(formData);
+
+      // if (error) {
+      //   toast.error(error.message);
+      //   return;
+      // }
+
+      //above we used the server action directly but below we are using the handler function from the context provider inside which we will call the server action. It does not really matter where we call the server action from
+      await handleAddPet(pet);
     }
 
     if (actionType === "edit" && selectedPet) {
-      const error = await editPet(selectedPet.id, formData);
+      //server action
+      // const error = await editPet(selectedPet.id, formData);
+      // if (error) {
+      //   toast.error(error.message);
+      //   return;
+      // }
 
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
+      //above we used the server action directly but below we are using the handler function from the context provider inside which we will call the server action. It does not really matter where we call the server action from
+      await handleEditPet(selectedPet.id, pet);
     }
-
-    onFormSubmission();
   }
   //when you pass a function reference to the form action, it receives the formData object
 

@@ -37,6 +37,13 @@ function TopBar({ selectedPet }: { selectedPet: TPet }) {
   const { handleCheckoutPet } = usePetsContext();
   const [isPending, startTransition] = useTransition();
 
+  //Below is the code we used when we wanted show a loading state for a server action which was used outside the form
+  // function handleTransitionForLoadiingState() {
+  //   startTransition(async function () {
+  //     await checkoutPet(selectedPet.id);
+  //   });
+  // }
+
   return (
     <div className="flex items-center bg-white px-8 py-5 border-b border-light">
       <Image
@@ -52,11 +59,7 @@ function TopBar({ selectedPet }: { selectedPet: TPet }) {
       <div className="space-x-2 ml-auto flex">
         <PetActionButton actionType="edit" />
         <PetActionButton
-          onClick={() => {
-            startTransition(async function () {
-              await checkoutPet(selectedPet.id);
-            });
-          }}
+          onClick={async () => await handleCheckoutPet(selectedPet.id)}
           actionType="checkout"
           disabled={isPending}
         />

@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { TPet } from "@/lib/types";
 import { sleep } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
@@ -8,20 +9,12 @@ export async function fetchPets() {
   return await prisma.pet.findMany();
 }
 
-export async function addPet(formData: FormData) {
+export async function addPet(newPet: Omit<TPet, "id">) {
   try {
-    await sleep(3000);
+    // await sleep(3000);
 
     await prisma.pet.create({
-      data: {
-        name: formData.get("name") as string,
-        ownerName: formData.get("ownerName") as string,
-        imageUrl:
-          (formData.get("imageUrl") as string) ||
-          "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-        age: parseInt(formData.get("age") as string),
-        notes: formData.get("notes") as string,
-      },
+      data: newPet,
     });
   } catch (error) {
     return {
@@ -32,23 +25,15 @@ export async function addPet(formData: FormData) {
   revalidatePath("/", "layout");
 }
 
-export async function editPet(petId: string, formData: FormData) {
+export async function editPet(petId: string, updatedPet: Omit<TPet, "id">) {
   try {
-    await sleep(300);
+    await sleep(3000);
 
     await prisma.pet.update({
       where: {
         id: petId,
       },
-      data: {
-        name: formData.get("name") as string,
-        ownerName: formData.get("ownerName") as string,
-        imageUrl:
-          (formData.get("imageUrl") as string) ||
-          "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-        age: parseInt(formData.get("age") as string),
-        notes: formData.get("notes") as string,
-      },
+      data: updatedPet,
     });
   } catch (error) {
     return {
