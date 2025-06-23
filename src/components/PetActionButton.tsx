@@ -15,8 +15,8 @@ type TPetActionButtonProps = {
 export default function PetActionButton({
   actionType,
   onClick,
-  disabled,
-}: TPetActionButtonProps) {
+}: // disabled,
+TPetActionButtonProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   if (actionType === "add") {
@@ -53,7 +53,7 @@ export default function PetActionButton({
 
   if (actionType === "checkout") {
     return (
-      <Button disabled={disabled} onClick={onClick} variant={"secondary"}>
+      <Button onClick={onClick} variant={"secondary"}>
         Checkout
       </Button>
     );

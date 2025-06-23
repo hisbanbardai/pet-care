@@ -61,7 +61,7 @@ function TopBar({ selectedPet }: { selectedPet: TPet }) {
         <PetActionButton
           onClick={async () => await handleCheckoutPet(selectedPet.id)}
           actionType="checkout"
-          disabled={isPending}
+          // disabled={isPending}
         />
       </div>
     </div>

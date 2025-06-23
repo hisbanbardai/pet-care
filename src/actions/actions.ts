@@ -27,7 +27,7 @@ export async function addPet(newPet: Omit<TPet, "id">) {
 
 export async function editPet(petId: string, updatedPet: Omit<TPet, "id">) {
   try {
-    await sleep(3000);
+    // await sleep(3000);
 
     await prisma.pet.update({
       where: {
@@ -46,7 +46,7 @@ export async function editPet(petId: string, updatedPet: Omit<TPet, "id">) {
 
 export async function checkoutPet(petId: string) {
   try {
-    await sleep(3000);
+    // await sleep(3000);
 
     await prisma.pet.delete({
       where: {
