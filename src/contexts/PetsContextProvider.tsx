@@ -1,7 +1,8 @@
 "use client";
 
 import { addPet, checkoutPet, editPet } from "@/actions/actions";
-import { TPet } from "@/lib/types";
+import { Pet } from "@prisma/client";
+import { TPet, TPetPrisma } from "@/lib/types";
 import { createContext, startTransition, useOptimistic, useState } from "react";
 import { toast } from "sonner";
 
@@ -16,12 +17,42 @@ type TPetsContext = {
   handleChangeSelectedPetId: (id: string) => void;
   selectedPet: TPet | undefined;
   numberOfPets: number;
-  handleCheckoutPet: (petId: string) => Promise<void>;
-  handleAddPet: (pet: Omit<TPet, "id">) => Promise<void>;
-  handleEditPet: (petId: string, pet: Omit<TPet, "id">) => Promise<void>;
+  handleCheckoutPet: (petId: Pet["id"]) => Promise<void>;
+  handleAddPet: (pet: TPetPrisma) => Promise<void>;
+  handleEditPet: (petId: Pet["id"], pet: TPetPrisma) => Promise<void>;
 } | null;
 
 export const PetsContext = createContext<TPetsContext>(null);
+
+type optimisticAction =
+  | { action: "add"; payload: TPet }
+  | { action: "edit"; payload: { petId: Pet["id"]; pet: TPetPrisma } }
+  | { action: "checkout"; payload: { petId: Pet["id"] } };
+
+//update function of useOptimistic hook
+const updateFunction = (
+  currentState: TPet[],
+  { action, payload }: optimisticAction
+): TPet[] => {
+  switch (action) {
+    case "add":
+      return [...currentState, payload];
+
+    case "edit":
+      return currentState.map((pet) => {
+        if (pet.id === payload.petId) {
+          return { ...pet, ...payload.pet };
+        }
+        return pet;
+      });
+
+    case "checkout":
+      return currentState.filter((pet) => pet.id !== payload.petId);
+
+    default:
+      return currentState;
+  }
+};
 
 export default function PetsContextProvider({
   data,
@@ -37,26 +68,7 @@ export default function PetsContextProvider({
   //we are using useOptimistic() hook below to optimistically update the UI and we use it in place of useState and also we will call the server actions inside the handler functions because it does not matter where we call the server actions
   const [optimisticPets, setOptimisticPets] = useOptimistic(
     data,
-    (currentState, { action, payload }): TPet[] => {
-      switch (action) {
-        case "add":
-          return [...currentState, payload];
-
-        case "edit":
-          return currentState.map((pet) => {
-            if (pet.id === payload.petId) {
-              return { ...pet, ...payload.pet };
-            }
-            return pet;
-          });
-
-        case "checkout":
-          return currentState.filter((pet) => pet.id !== payload.petId);
-
-        default:
-          return currentState;
-      }
-    }
+    updateFunction
   );
 
   //derived state
@@ -64,11 +76,11 @@ export default function PetsContextProvider({
   const numberOfPets = optimisticPets.length;
 
   //event handler functions / actions
-  function handleChangeSelectedPetId(id: string) {
+  function handleChangeSelectedPetId(id: Pet["id"]) {
     setSelectedPetId(id);
   }
 
-  async function handleCheckoutPet(petId: string) {
+  async function handleCheckoutPet(petId: Pet["id"]) {
     // setPets((prev) => prev.filter((pet) => pet.id !== selectedPetId));
 
     startTransition(() => {
@@ -85,7 +97,7 @@ export default function PetsContextProvider({
     setSelectedPetId(null);
   }
 
-  async function handleAddPet(pet: Omit<TPet, "id">) {
+  async function handleAddPet(pet: TPetPrisma) {
     // setPets((prev) => [...prev, { ...pet, id: Date.now().toString() }]);
 
     setOptimisticPets({
@@ -101,7 +113,7 @@ export default function PetsContextProvider({
     }
   }
 
-  async function handleEditPet(petId: string, pet: Omit<TPet, "id">) {
+  async function handleEditPet(petId: Pet["id"], pet: TPetPrisma) {
     // setPets((prev) =>
     //   prev.map((p) => {
     //     if (p.id === petId) {

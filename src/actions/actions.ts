@@ -11,13 +11,14 @@ export async function fetchPets() {
 
 export async function addPet(newPet: Omit<TPet, "id">) {
   try {
-    // await sleep(3000);
+    await sleep(1000);
 
     await prisma.pet.create({
       data: newPet,
     });
   } catch (error) {
     return {
+      error,
       message: "Could not add a pet",
     };
   }
@@ -27,7 +28,7 @@ export async function addPet(newPet: Omit<TPet, "id">) {
 
 export async function editPet(petId: string, updatedPet: Omit<TPet, "id">) {
   try {
-    // await sleep(3000);
+    await sleep(1000);
 
     await prisma.pet.update({
       where: {
@@ -37,6 +38,7 @@ export async function editPet(petId: string, updatedPet: Omit<TPet, "id">) {
     });
   } catch (error) {
     return {
+      error,
       message: "Could not edit the pet",
     };
   }
@@ -46,7 +48,7 @@ export async function editPet(petId: string, updatedPet: Omit<TPet, "id">) {
 
 export async function checkoutPet(petId: string) {
   try {
-    // await sleep(3000);
+    await sleep(1000);
 
     await prisma.pet.delete({
       where: {
@@ -55,6 +57,7 @@ export async function checkoutPet(petId: string) {
     });
   } catch (error) {
     return {
+      error,
       message: "Could not delete the pet",
     };
   }

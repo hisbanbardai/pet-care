@@ -1,3 +1,5 @@
+import { Pet } from "@prisma/client";
+
 export type TPet = {
   id: string;
   name: string;
@@ -6,3 +8,7 @@ export type TPet = {
   age: number;
   notes: string;
 };
+
+export type TPetPrisma = Omit<Pet, "id" | "createdAt" | "updatedAt">;
+
+export type actionType = "add" | "edit" | "checkout";

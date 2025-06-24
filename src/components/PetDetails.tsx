@@ -4,8 +4,8 @@ import usePetsContext from "@/hooks/usePetsContext";
 import { TPet } from "@/lib/types";
 import Image from "next/image";
 import PetActionButton from "./PetActionButton";
-import { checkoutPet } from "@/actions/actions";
-import { useTransition } from "react";
+// import { checkoutPet } from "@/actions/actions";
+// import { useTransition } from "react";
 
 export default function PetDetails() {
   const { selectedPet } = usePetsContext();
@@ -35,7 +35,7 @@ function EmptyView() {
 
 function TopBar({ selectedPet }: { selectedPet: TPet }) {
   const { handleCheckoutPet } = usePetsContext();
-  const [isPending, startTransition] = useTransition();
+  // const [isPending, startTransition] = useTransition();
 
   //Below is the code we used when we wanted show a loading state for a server action which was used outside the form
   // function handleTransitionForLoadiingState() {
