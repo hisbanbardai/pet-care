@@ -17,6 +17,8 @@ import usePetsContext from "@/hooks/usePetsContext";
 import PetFormSubmitBtn from "./PetFormSubmitBtn";
 import { useForm } from "react-hook-form";
 import { TPetPrisma } from "@/lib/types";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 // import { addPet, editPet } from "@/actions/actions";
 // import { toast } from "sonner";
 
@@ -27,6 +29,29 @@ type TPetFormProps = {
   onFormSubmission: () => void;
   actionType: "add" | "edit" | "checkout";
 };
+
+const petFormSchema = z.object({
+  name: z.string().trim().min(1, { message: "Name is required" }).max(100),
+  ownerName: z
+    .string()
+    .trim()
+    .min(1, { message: "Owner name is required" })
+    .max(100),
+  imageUrl: z
+    .string()
+    .trim()
+    .url({ message: "Image url must be a valid url" })
+    .optional()
+    .or(z.literal("")),
+  age: z.coerce.number().positive().int().max(9999),
+  notes: z
+    .string()
+    .trim()
+    .max(500, { message: "Maximum 500 characters allowed" })
+    .optional(),
+});
+
+type TPetFormSchema = z.infer<typeof petFormSchema>;
 
 export default function PetForm({
   children,
@@ -68,7 +93,9 @@ export default function PetForm({
     register,
     trigger,
     formState: { errors },
-  } = useForm<TPetPrisma>();
+  } = useForm<TPetFormSchema>({
+    resolver: zodResolver(petFormSchema),
+  });
 
   async function handleFormAction(formData: FormData) {
     //because we are directly calling our server action in form's action, to trigger the react hook form we need to call the below trigger method
@@ -153,7 +180,9 @@ export default function PetForm({
                 //   actionType === "edit" ? selectedPet?.ownerName : ""
                 // }
               />
-              {errors.ownerName && <p>{errors.ownerName.message}</p>}
+              {errors.ownerName && (
+                <p className="text-red-500">{errors.ownerName.message}</p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -167,6 +196,9 @@ export default function PetForm({
                 //   actionType === "edit" ? selectedPet?.imageUrl : ""
                 // }
               />
+              {errors.imageUrl && (
+                <p className="text-red-500">{errors.imageUrl.message}</p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -179,6 +211,9 @@ export default function PetForm({
                 // required
                 // defaultValue={actionType === "edit" ? selectedPet?.age : ""}
               />
+              {errors.age && (
+                <p className="text-red-500">{errors.age.message}</p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -191,6 +226,9 @@ export default function PetForm({
                 // required
                 // defaultValue={actionType === "edit" ? selectedPet?.notes : ""}
               />
+              {errors.notes && (
+                <p className="text-red-500">{errors.notes.message}</p>
+              )}
             </div>
           </div>
 
