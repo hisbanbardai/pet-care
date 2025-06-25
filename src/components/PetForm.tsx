@@ -15,6 +15,8 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import usePetsContext from "@/hooks/usePetsContext";
 import PetFormSubmitBtn from "./PetFormSubmitBtn";
+import { useForm } from "react-hook-form";
+import { TPetPrisma } from "@/lib/types";
 // import { addPet, editPet } from "@/actions/actions";
 // import { toast } from "sonner";
 
@@ -62,7 +64,18 @@ export default function PetForm({
   //   onFormSubmission();
   // };
 
+  const {
+    register,
+    trigger,
+    formState: { errors },
+  } = useForm<TPetPrisma>();
+
   async function handleFormAction(formData: FormData) {
+    //because we are directly calling our server action in form's action, to trigger the react hook form we need to call the below trigger method
+    const result = await trigger();
+    //if result is not valid then we would just return and not the submit the data
+    if (!result) return;
+
     onFormSubmission();
 
     const pet = {
@@ -117,35 +130,42 @@ export default function PetForm({
               <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
-                name="name"
+                {...register("name")}
                 type="text"
-                required
-                defaultValue={actionType === "edit" ? selectedPet?.name : ""}
+                name="name"
+                // required
+                // defaultValue={actionType === "edit" ? selectedPet?.name : ""}
               />
+              {errors.name && (
+                <p className="text-red-500">{errors.name.message}</p>
+              )}
             </div>
 
             <div className="space-y-1">
               <Label htmlFor="ownerName">Owner Name</Label>
               <Input
                 id="ownerName"
+                {...register("ownerName")}
                 name="ownerName"
                 type="text"
-                required
-                defaultValue={
-                  actionType === "edit" ? selectedPet?.ownerName : ""
-                }
+                // required
+                // defaultValue={
+                //   actionType === "edit" ? selectedPet?.ownerName : ""
+                // }
               />
+              {errors.ownerName && <p>{errors.ownerName.message}</p>}
             </div>
 
             <div className="space-y-1">
               <Label htmlFor="imageUrl">Image Url</Label>
               <Input
                 id="imageUrl"
+                {...register("imageUrl")}
                 name="imageUrl"
-                type="text"
-                defaultValue={
-                  actionType === "edit" ? selectedPet?.imageUrl : ""
-                }
+                // type="text"
+                // defaultValue={
+                //   actionType === "edit" ? selectedPet?.imageUrl : ""
+                // }
               />
             </div>
 
@@ -153,10 +173,11 @@ export default function PetForm({
               <Label htmlFor="age">Age</Label>
               <Input
                 id="age"
+                {...register("age")}
                 name="age"
-                type="number"
-                required
-                defaultValue={actionType === "edit" ? selectedPet?.age : ""}
+                // type="number"
+                // required
+                // defaultValue={actionType === "edit" ? selectedPet?.age : ""}
               />
             </div>
 
@@ -164,10 +185,11 @@ export default function PetForm({
               <Label htmlFor="notes">Notes</Label>
               <Textarea
                 id="notes"
+                {...register("notes")}
                 name="notes"
                 rows={3}
-                required
-                defaultValue={actionType === "edit" ? selectedPet?.notes : ""}
+                // required
+                // defaultValue={actionType === "edit" ? selectedPet?.notes : ""}
               />
             </div>
           </div>
