@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { Dialog } from "./ui/dialog";
 import PetForm from "./PetForm";
 import { useState } from "react";
+import { flushSync } from "react-dom";
 
 type TPetActionButtonProps = {
   actionType: "add" | "edit" | "checkout";
@@ -25,7 +26,9 @@ TPetActionButtonProps) {
         <PetForm
           title={"Add a new pet"}
           buttonLabel={"Add a new pet"}
-          onFormSubmission={() => setIsFormOpen(false)}
+          onFormSubmission={() => {
+            flushSync(() => setIsFormOpen(false));
+          }}
           actionType={actionType}
         >
           <Button size={"icon"}>
@@ -42,7 +45,9 @@ TPetActionButtonProps) {
         <PetForm
           title={"Edit pet"}
           buttonLabel={"Edit a pet"}
-          onFormSubmission={() => setIsFormOpen(false)}
+          onFormSubmission={() => {
+            flushSync(() => setIsFormOpen(false));
+          }}
           actionType={actionType}
         >
           <Button variant={"secondary"}>Edit</Button>
