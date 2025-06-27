@@ -10,7 +10,8 @@ export async function fetchPets() {
   return await prisma.pet.findMany();
 }
 
-export async function addPet(newPet: Omit<TPet, "id">) {
+export async function addPet(newPet: unknown) {
+  //we set newPet type as unknown because this is the data that we are getting from the client to the server action addPet so we don't really know what is the type of the data we are getting and that is why we are why using zod to validate it first before inserting it into the database
   try {
     await sleep(1000);
 
@@ -36,7 +37,8 @@ export async function addPet(newPet: Omit<TPet, "id">) {
   revalidatePath("/", "layout");
 }
 
-export async function editPet(petId: string, updatedPet: Omit<TPet, "id">) {
+export async function editPet(petId: unknown, updatedPet: unknown) {
+  //we set petId and updatedPet types as unknown because this is the data that we are getting from the client to the server action editPet so we don't really know what is the type of the data we are getting
   try {
     await sleep(1000);
 
@@ -57,7 +59,8 @@ export async function editPet(petId: string, updatedPet: Omit<TPet, "id">) {
   revalidatePath("/", "layout");
 }
 
-export async function checkoutPet(petId: string) {
+export async function checkoutPet(petId: unknown) {
+  //we set petId type as unknown because this is the data that we are getting from the client to the server action checkoutPet so we don't really know what is the type of the data we are getting
   try {
     await sleep(1000);
 
