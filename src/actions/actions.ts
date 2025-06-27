@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { TPet } from "@/lib/types";
 import { sleep } from "@/lib/utils";
+import { petFormSchema } from "@/lib/zod";
 import { revalidatePath } from "next/cache";
 
 export async function fetchPets() {
@@ -11,12 +12,19 @@ export async function fetchPets() {
 
 export async function addPet(newPet: Omit<TPet, "id">) {
   try {
-    console.log(newPet);
-
     await sleep(1000);
 
+    const validatedPet = petFormSchema.safeParse(newPet);
+
+    if (!validatedPet.success) {
+      console.error(validatedPet.error);
+      return {
+        message: "Invalid inputs",
+      };
+    }
+
     await prisma.pet.create({
-      data: newPet,
+      data: validatedPet.data,
     });
   } catch (error) {
     return {
