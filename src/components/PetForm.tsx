@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { TPetPrisma } from "@/lib/types";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { petFormSchema, TPetFormSchema } from "@/lib/zod";
 // import { addPet, editPet } from "@/actions/actions";
 // import { toast } from "sonner";
 
@@ -29,29 +30,6 @@ type TPetFormProps = {
   onFormSubmission: () => void;
   actionType: "add" | "edit" | "checkout";
 };
-
-const petFormSchema = z.object({
-  name: z.string().trim().min(1, { message: "Name is required" }).max(100),
-  ownerName: z
-    .string()
-    .trim()
-    .min(1, { message: "Owner name is required" })
-    .max(100),
-  imageUrl: z
-    .string()
-    .trim()
-    .url({ message: "Image url must be a valid url" })
-    .optional()
-    .or(z.literal("")),
-  age: z.coerce.number().positive().int().max(9999),
-  notes: z
-    .string()
-    .trim()
-    .max(500, { message: "Maximum 500 characters allowed" })
-    .optional(),
-});
-
-type TPetFormSchema = z.infer<typeof petFormSchema>;
 
 export default function PetForm({
   children,
@@ -91,29 +69,38 @@ export default function PetForm({
 
   const {
     register,
-    trigger,
     formState: { errors },
+    handleSubmit,
   } = useForm<TPetFormSchema>({
     resolver: zodResolver(petFormSchema),
   });
 
-  async function handleFormAction(formData: FormData) {
+  async function handleFormAction(formData: TPetPrisma) {
     //because we are directly calling our server action in form's action, to trigger the react hook form we need to call the below trigger method
-    const result = await trigger();
+
+    // const result = await trigger();
     //if result is not valid then we would just return and not the submit the data
-    if (!result) return;
+    // if (!result) return;
+
+    //Ignore the above because eventually we decided to not call server action in the action attribute of form and we went with the traditional way i.e. using the handleSubmit method provided by the RHF and calling onSubmit event from the form like this <form onSubmit={handleSubmit(handleFormAction)}>. handleFormAction will get the validated formData object
+
+    //const petData = getValues();
+    //if we were calling the server action in the action attribute of the form, eventually to get the zod validated data we would have to call getValues() method from RHF but the issue with this approach is that the form data we would get from the getValues() will be validated on the basis of zod schema but if we have applied any transformations in the zod schema like coercing string to number or using transform() method, those transformations would not be applied to the formData.
+    //NOTE: the above mentioned issue with zod transformation will only happen on client side, if we send the formData that we will get from getValues() as it is to the server and then use the same schema on the server side, the transformations will get applied there
+
+    const petData = formData;
 
     onFormSubmission();
 
-    const pet = {
-      name: formData.get("name") as string,
-      ownerName: formData.get("ownerName") as string,
-      imageUrl:
-        (formData.get("imageUrl") as string) ||
-        "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-      age: parseInt(formData.get("age") as string),
-      notes: formData.get("notes") as string,
-    };
+    // const pet = {
+    //   name: formData.get("name") as string,
+    //   ownerName: formData.get("ownerName") as string,
+    //   imageUrl:
+    //     (formData.get("imageUrl") as string) ||
+    //     "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+    //   age: parseInt(formData.get("age") as string),
+    //   notes: formData.get("notes") as string,
+    // };
 
     if (actionType === "add") {
       //server action
@@ -125,7 +112,7 @@ export default function PetForm({
       // }
 
       //above we used the server action directly but below we are using the handler function from the context provider inside which we will call the server action. It does not really matter where we call the server action from
-      await handleAddPet(pet);
+      await handleAddPet(petData);
     }
 
     if (actionType === "edit" && selectedPet) {
@@ -137,7 +124,7 @@ export default function PetForm({
       // }
 
       //above we used the server action directly but below we are using the handler function from the context provider inside which we will call the server action. It does not really matter where we call the server action from
-      await handleEditPet(selectedPet.id, pet);
+      await handleEditPet(selectedPet.id, petData);
     }
   }
   //when you pass a function reference to the form action, it receives the formData object
@@ -146,7 +133,7 @@ export default function PetForm({
     <>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
-        <form action={handleFormAction}>
+        <form onSubmit={handleSubmit(handleFormAction)}>
           <DialogHeader>
             <DialogTitle className="font-bold text-xl">{title}</DialogTitle>
             <DialogDescription></DialogDescription>

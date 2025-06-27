@@ -11,6 +11,8 @@ export async function fetchPets() {
 
 export async function addPet(newPet: Omit<TPet, "id">) {
   try {
+    console.log(newPet);
+
     await sleep(1000);
 
     await prisma.pet.create({
@@ -37,6 +39,7 @@ export async function editPet(petId: string, updatedPet: Omit<TPet, "id">) {
       data: updatedPet,
     });
   } catch (error) {
+    console.error(error);
     return {
       error,
       message: "Could not edit the pet",

@@ -83,6 +83,7 @@ export default function PetsContextProvider({
   async function handleCheckoutPet(petId: Pet["id"]) {
     // setPets((prev) => prev.filter((pet) => pet.id !== selectedPetId));
 
+    //Yes — the real reason why startTransition() is required for checkout (but not add or edit) in your case is: Because add and edit are triggered through a <form action={...}>, but checkout is triggered via a client-side event handler (like onClick).
     startTransition(() => {
       setOptimisticPets({ action: "checkout", payload: { petId } });
     });
@@ -100,13 +101,16 @@ export default function PetsContextProvider({
   async function handleAddPet(pet: TPetPrisma) {
     // setPets((prev) => [...prev, { ...pet, id: Date.now().toString() }]);
 
-    setOptimisticPets({
-      action: "add",
-      payload: { ...pet, id: Date.now().toString() },
+    startTransition(() => {
+      setOptimisticPets({
+        action: "add",
+        payload: { ...pet, id: Date.now().toString() },
+      });
     });
 
     const error = await addPet(pet);
 
+    //if there is an error while adding a pet in the database then optimisticUI will automatically revert the UI update
     if (error) {
       toast.error(error.message);
       return;
@@ -123,7 +127,9 @@ export default function PetsContextProvider({
     //   })
     // );
 
-    setOptimisticPets({ action: "edit", payload: { petId, pet } });
+    startTransition(() => {
+      setOptimisticPets({ action: "edit", payload: { petId, pet } });
+    });
 
     const error = await editPet(petId, pet);
 
