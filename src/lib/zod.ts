@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const petIdSchema = z.string().uuid();
+
 export const petFormSchema = z
   .object({
     name: z.string().trim().min(1, { message: "Name is required" }).max(100),

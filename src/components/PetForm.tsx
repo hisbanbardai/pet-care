@@ -17,7 +17,6 @@ import usePetsContext from "@/hooks/usePetsContext";
 import PetFormSubmitBtn from "./PetFormSubmitBtn";
 import { useForm } from "react-hook-form";
 import { TPetPrisma } from "@/lib/types";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { petFormSchema, TPetFormSchema } from "@/lib/zod";
 // import { addPet, editPet } from "@/actions/actions";
@@ -73,6 +72,13 @@ export default function PetForm({
     handleSubmit,
   } = useForm<TPetFormSchema>({
     resolver: zodResolver(petFormSchema),
+    defaultValues: {
+      name: selectedPet?.name,
+      ownerName: selectedPet?.ownerName,
+      imageUrl: selectedPet?.imageUrl,
+      age: selectedPet?.age,
+      notes: selectedPet?.notes,
+    },
   });
 
   async function handleFormAction(formData: TPetPrisma) {
