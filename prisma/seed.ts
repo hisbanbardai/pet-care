@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 const userData: Prisma.UserCreateInput = {
   email: "example@gmail.com",
   password: "",
+  //below, because user has 1 to many relation with pets, we can directly add pets data when creating the user and prisma will automatically assign the user id to each of the below pets.
   pets: {
     create: [
       {

@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+export { auth as middleware } from "./lib/auth";
+//here we are telling next auth to use auth as middleware. We need to export a named 'middleware' variable for it to work
 
 export const config = {
   matcher: [
@@ -12,8 +13,3 @@ export const config = {
     "/((?!api|_next/static|_next/image|favicon.ico|icon.svg|sitemap.xml|robots.txt).*)",
   ],
 };
-
-export function middleware(request: Request) {
-  console.log("url " + request.url);
-  return NextResponse.next();
-}
