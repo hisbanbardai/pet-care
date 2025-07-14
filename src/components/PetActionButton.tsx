@@ -10,7 +10,7 @@ import { flushSync } from "react-dom";
 type TPetActionButtonProps = {
   actionType: "add" | "edit" | "checkout";
   onClick?: () => void;
-  disabled?: boolean;
+  // disabled?: boolean;
 };
 
 export default function PetActionButton({

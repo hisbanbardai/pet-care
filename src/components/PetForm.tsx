@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { TPetPrisma } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { petFormSchema, TPetFormSchema } from "@/lib/zod";
+import { useEffect } from "react";
 // import { addPet, editPet } from "@/actions/actions";
 // import { toast } from "sonner";
 
@@ -37,7 +38,10 @@ export default function PetForm({
   actionType,
   onFormSubmission,
 }: TPetFormProps) {
+  console.log("Pet form component rendering");
+
   const { handleAddPet, selectedPet, handleEditPet } = usePetsContext();
+  console.log(selectedPet);
 
   // const handleFormSubmit = function (e: FormEvent<HTMLFormElement>) {
   //   e.preventDefault();
@@ -70,16 +74,27 @@ export default function PetForm({
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm<TPetFormSchema>({
     resolver: zodResolver(petFormSchema),
-    defaultValues: {
-      name: selectedPet?.name,
-      ownerName: selectedPet?.ownerName,
-      imageUrl: selectedPet?.imageUrl,
-      age: selectedPet?.age,
-      notes: selectedPet?.notes,
-    },
+    defaultValues:
+      actionType === "edit"
+        ? {
+            name: selectedPet?.name,
+            ownerName: selectedPet?.ownerName,
+            imageUrl: selectedPet?.imageUrl,
+            age: selectedPet?.age,
+            notes: selectedPet?.notes,
+          }
+        : undefined,
   });
+
+  //used reset in useEffect to update the default values in the case of edit
+  useEffect(() => {
+    if (selectedPet && actionType === "edit") {
+      reset(selectedPet);
+    }
+  }, [reset, selectedPet, actionType]);
 
   async function handleFormAction(formData: TPetPrisma) {
     //because we are directly calling our server action in form's action, to trigger the react hook form we need to call the below trigger method
@@ -154,7 +169,7 @@ export default function PetForm({
                 type="text"
                 name="name"
                 // required
-                // defaultValue={actionType === "edit" ? selectedPet?.name : ""}
+                defaultValue={actionType === "edit" ? selectedPet?.name : ""}
               />
               {errors.name && (
                 <p className="text-red-500">{errors.name.message}</p>
