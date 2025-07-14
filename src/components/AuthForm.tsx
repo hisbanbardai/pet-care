@@ -1,10 +1,11 @@
+import { logIn } from "@/actions/actions";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 export default function AuthForm({ type }: { type: string }) {
   return (
-    <form>
+    <form action={logIn}>
       <div className="space-y-1">
         <Label htmlFor="email">Email</Label>
         <Input

@@ -1,9 +1,12 @@
 "use server";
 
+import { signIn } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { sleep } from "@/lib/utils";
 import { petFormSchema, petIdSchema } from "@/lib/zod";
 import { revalidatePath } from "next/cache";
+
+/*--------------- PET ACTIONS ------------------- */
 
 export async function fetchPets() {
   return await prisma.pet.findMany();
@@ -104,4 +107,12 @@ export async function checkoutPet(petId: unknown) {
   }
 
   revalidatePath("/", "layout");
+}
+
+/*--------------- USER ACTIONS ------------------- */
+
+export async function logIn(formData: FormData) {
+  const authData = Object.fromEntries(formData.entries());
+
+  await signIn("credentials", authData);
 }
