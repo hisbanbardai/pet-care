@@ -38,10 +38,10 @@ export default function PetForm({
   actionType,
   onFormSubmission,
 }: TPetFormProps) {
-  console.log("Pet form component rendering");
+  // console.log("Pet form component rendering");
 
   const { handleAddPet, selectedPet, handleEditPet } = usePetsContext();
-  console.log(selectedPet);
+  // console.log(selectedPet);
 
   // const handleFormSubmit = function (e: FormEvent<HTMLFormElement>) {
   //   e.preventDefault();
