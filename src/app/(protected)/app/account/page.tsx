@@ -1,4 +1,5 @@
 import ContentWrapper from "@/components/ContentWrapper";
+import SignoutBtn from "@/components/SignoutBtn";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -19,8 +20,11 @@ export default async function AccountPage() {
 
       <div className="h-[500px]">
         <ContentWrapper>
-          <div className="flex justify-center items-center h-full">
+          <div className="flex justify-center items-center h-full flex-col gap-3">
             <p>Logged in as {session.user.email}</p>
+
+            {/* We created a separate signout button component because we wanted to do an onClick on the button and if we did that in this page component then we would have to make the whole page a client component that is why it is better to refactor it into a separate component  */}
+            <SignoutBtn />
           </div>
         </ContentWrapper>
       </div>
