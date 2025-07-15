@@ -4,6 +4,7 @@ import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { sleep } from "@/lib/utils";
 import { petFormSchema, petIdSchema } from "@/lib/zod";
+import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
 /*--------------- PET ACTIONS ------------------- */
@@ -112,13 +113,43 @@ export async function checkoutPet(petId: unknown) {
 /*--------------- USER ACTIONS ------------------- */
 
 export async function logIn(formData: FormData) {
-  const authData = Object.fromEntries(formData.entries());
-
-  await signIn("credentials", authData);
+  await signIn("credentials", formData);
 }
 
 export async function logOut() {
   await signOut({
     redirectTo: "/",
   });
+}
+
+export async function signUp(formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  //check if a user with email already exists
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (existingUser) {
+    return {
+      message: "User with that email address already exisits",
+    };
+  }
+
+  //hash password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  //create new user
+  const newUser = await prisma.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+    },
+  });
+
+  //log in the new created user so that next auth will generate the cookie for us
+  await signIn("credentials", formData);
 }
