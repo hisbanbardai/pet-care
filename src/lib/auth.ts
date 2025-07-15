@@ -50,11 +50,39 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       //In auth object, we will receive whatever we return from the authorize function of credentials provider
       const isLoggedIn = Boolean(auth?.user);
 
+      if (isLoggedIn && !isAccessingApp) {
+        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+      }
+
       if ((isAccessingApp && isLoggedIn) || !isAccessingApp) {
         return true;
       }
 
       return false;
+    },
+
+    redirect: async ({ url, baseUrl }) => {
+      // console.log("URL", url);
+      // console.log("BASEURL", baseUrl);
+
+      if (url.startsWith("/")) {
+        return baseUrl + url;
+      }
+
+      const urlObj = new URL(url);
+      const callbackUrlParam = urlObj.searchParams.get("callbackUrl");
+      // console.log("CALLBACKURL", callbackUrlParam);
+
+      if (callbackUrlParam) {
+        return callbackUrlParam; // Return the specific callbackUrl from the query
+      }
+
+      if (url.includes("signin")) {
+        return baseUrl + "/app/dashboard";
+      }
+
+      // Fallback to default behavior if no specific callbackUrl is found
+      return url.startsWith(baseUrl) ? url : baseUrl;
     },
   },
 });
