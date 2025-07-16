@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "./prisma";
 import bcrypt from "bcryptjs";
@@ -13,7 +13,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         //fetch user from db
         const existingUser = await prisma.user.findUnique({
           where: {
-            email: email,
+            email: email as string,
           },
         });
 
@@ -24,8 +24,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         //match passwords
-        const isPasswordSame = await bcrypt.compare(
-          password,
+        const isPasswordSame = bcrypt.compare(
+          password as string,
           existingUser.password
         );
 
@@ -65,10 +65,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // console.log("URL", url);
       // console.log("BASEURL", baseUrl);
 
+      //in the case of sign out action where we are redirecting user to home page
       if (url.startsWith("/")) {
         return baseUrl + url;
       }
 
+      //check if there is a callbackurl parameter in the url
       const urlObj = new URL(url);
       const callbackUrlParam = urlObj.searchParams.get("callbackUrl");
       // console.log("CALLBACKURL", callbackUrlParam);
@@ -84,5 +86,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Fallback to default behavior if no specific callbackUrl is found
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
+
+    //Auth.js libraries only expose a subset of the user’s information by default in a session to not accidentally expose sensitive user information. This is name, email, and image. To resolve this issue we attach the user id in jwt callback.
+    //NOTE: We do not have to explicitly attach the user id to token object in jwt callback because it already is present inside the object but with an unusual key name "sub" that is why for our convenience, below we added userId to the token object
+    jwt: async ({ token }) => {
+      // console.log("jwt token", token);
+      token.userId = token.sub;
+      return token;
+    },
+
+    //Below session callback will run everytime we try to access a session on client or server side and as we discovered that by default auth js does not put sensitive information like user id in the session object, we have to do it ourselves like we are doing it below. We take the userId from the token object that we put in the jwt callback and add it to the session object
+    session: async ({ session, token }) => {
+      // console.log("auth ke andar", session);
+      session.user.id = token.userId as string;
+
+      return session;
+    },
   },
-});
+} satisfies NextAuthConfig);

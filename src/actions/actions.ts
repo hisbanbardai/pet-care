@@ -9,8 +9,12 @@ import { revalidatePath } from "next/cache";
 
 /*--------------- PET ACTIONS ------------------- */
 
-export async function fetchPets() {
-  return await prisma.pet.findMany();
+export async function fetchPets(userId: string | undefined) {
+  return await prisma.pet.findMany({
+    where: {
+      userId,
+    },
+  });
 }
 
 export async function addPet(newPet: unknown) {
