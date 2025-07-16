@@ -103,9 +103,19 @@ export async function editPet(petId: unknown, updatedPet: unknown) {
 
 export async function checkoutPet(petId: unknown) {
   //we set petId type as unknown because this is the data that we are getting from the client to the server action checkoutPet so we don't really know what is the type of the data we are getting
+
+  //we can use the session directly in server action too as well as in server and client components/pages
+  //authentication check (check if user has the valid token and he is what he says he is)
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/signin");
+  }
+
   try {
     await sleep(1000);
 
+    //validation of data
     const validatePetId = petIdSchema.safeParse(petId);
 
     if (!validatePetId.success) {
@@ -115,6 +125,23 @@ export async function checkoutPet(petId: unknown) {
       };
     }
 
+    //authorization check (to check if the pet that user is trying to check out actually belongs to the user)
+    const pet = await prisma.pet.findUnique({
+      where: {
+        id: validatePetId.data,
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (pet?.userId !== session.user.id) {
+      return {
+        message: "Not authorized",
+      };
+    }
+
+    //checkout the pet
     await prisma.pet.delete({
       where: {
         id: validatePetId.data,
