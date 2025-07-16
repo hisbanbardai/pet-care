@@ -1,12 +1,12 @@
 "use server";
 
-import { auth, signIn, signOut } from "@/lib/auth";
+import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { checkAuth } from "@/lib/server-utils";
 import { sleep } from "@/lib/utils";
 import { petFormSchema, petIdSchema } from "@/lib/zod";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 /*--------------- PET ACTIONS ------------------- */
 
@@ -22,11 +22,7 @@ export async function addPet(newPet: unknown) {
   //we set newPet type as unknown because this is the data that we are getting from the client to the server action addPet so we don't really know what is the type of the data we are getting and that is why we are why using zod to validate it first before inserting it into the database
 
   //we can use the session directly in server action too as well as in server and client components/pages
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/signin");
-  }
+  const session = await checkAuth();
 
   try {
     await sleep(1000);
@@ -45,7 +41,7 @@ export async function addPet(newPet: unknown) {
         ...validatedPet.data,
         user: {
           connect: {
-            id: session.user.id,
+            id: session.user?.id,
           },
         },
       },
@@ -65,11 +61,7 @@ export async function editPet(petId: unknown, updatedPet: unknown) {
 
   //we can use the session directly in server action too as well as in server and client components/pages
   //authentication check (check if user has the valid token and he is what he says he is)
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/signin");
-  }
+  const session = await checkAuth();
 
   try {
     await sleep(1000);
@@ -111,7 +103,7 @@ export async function editPet(petId: unknown, updatedPet: unknown) {
       };
     }
 
-    if (pet?.userId !== session.user.id) {
+    if (pet?.userId !== session.user?.id) {
       return {
         message: "Not authorized",
       };
@@ -139,11 +131,7 @@ export async function checkoutPet(petId: unknown) {
 
   //we can use the session directly in server action too as well as in server and client components/pages
   //authentication check (check if user has the valid token and he is what he says he is)
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/signin");
-  }
+  const session = await checkAuth();
 
   try {
     await sleep(1000);
@@ -175,7 +163,7 @@ export async function checkoutPet(petId: unknown) {
       };
     }
 
-    if (pet?.userId !== session.user.id) {
+    if (pet?.userId !== session.user?.id) {
       return {
         message: "Not authorized",
       };
@@ -230,7 +218,7 @@ export async function signUp(formData: FormData) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   //create new user
-  const newUser = await prisma.user.create({
+  await prisma.user.create({
     data: {
       email,
       password: hashedPassword,

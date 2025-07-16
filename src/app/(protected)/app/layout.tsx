@@ -5,8 +5,7 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import { Toaster } from "@/components/ui/sonner";
 import PetsContextProvider from "@/contexts/PetsContextProvider";
 import SearchContextProvider from "@/contexts/SearchContextProvider";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { checkAuth } from "@/lib/server-utils";
 import React from "react";
 
 export default async function ProtectedPagesLayout({
@@ -24,15 +23,11 @@ export default async function ProtectedPagesLayout({
 
   // const data: TPet[] = await response.json();
 
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/signin");
-  }
+  const session = await checkAuth();
   // console.log("Layout ke andar", session.user);
 
   //server action
-  const pets = await fetchPets(session.user.id);
+  const pets = await fetchPets(session.user?.id);
 
   return (
     <>
