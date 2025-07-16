@@ -62,9 +62,19 @@ export async function addPet(newPet: unknown) {
 
 export async function editPet(petId: unknown, updatedPet: unknown) {
   //we set petId and updatedPet types as unknown because this is the data that we are getting from the client to the server action editPet so we don't really know what is the type of the data we are getting
+
+  //we can use the session directly in server action too as well as in server and client components/pages
+  //authentication check (check if user has the valid token and he is what he says he is)
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/signin");
+  }
+
   try {
     await sleep(1000);
 
+    //validation of data
     const validatedPet = petFormSchema.safeParse(updatedPet);
     const validatePetId = petIdSchema.safeParse(petId);
 
@@ -81,6 +91,29 @@ export async function editPet(petId: unknown, updatedPet: unknown) {
       );
       return {
         message: "Invalid pet data",
+      };
+    }
+
+    //authorization check (to check if the pet that user is trying to edit actually belongs to the user)
+    const pet = await prisma.pet.findUnique({
+      where: {
+        id: validatePetId.data,
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    //additional check to see if pet exists
+    if (!pet) {
+      return {
+        message: "Pet not found",
+      };
+    }
+
+    if (pet?.userId !== session.user.id) {
+      return {
+        message: "Not authorized",
       };
     }
 
@@ -134,6 +167,13 @@ export async function checkoutPet(petId: unknown) {
         userId: true,
       },
     });
+
+    //additional check to see if pet exists
+    if (!pet) {
+      return {
+        message: "Pet not found",
+      };
+    }
 
     if (pet?.userId !== session.user.id) {
       return {
