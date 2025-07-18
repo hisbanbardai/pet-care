@@ -5,7 +5,7 @@ export default function SignupPage() {
   return (
     <main>
       <h1 className="font-medium text-2xl text-center mb-5">Sign up</h1>
-      <AuthForm type="signup" />
+      <AuthForm type="signUp" />
       <AuthBottomMessage
         text="Already have an account?"
         linkTo="/signin"

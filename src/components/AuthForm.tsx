@@ -3,9 +3,25 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
-export default function AuthForm({ type }: { type: string }) {
+type AuthFormProps = {
+  type: "signin" | "signUp";
+};
+
+export default function AuthForm({ type }: AuthFormProps) {
   return (
-    <form action={type === "signin" ? logIn : signUp}>
+    /*<form action={type === "signUp" ? signUp : logIn}>
+    we could have done the above but typescript was giving a red squiggly line under action attribute because it expects whatever the server action reference signUp or logIn we put it should only return Promise<void> and we are returning string in some cases. See chatgpt chat for refresher
+    */
+    <form
+      action={async (formData) => {
+        "use server";
+        if (type === "signUp") {
+          await signUp(formData);
+        } else {
+          await logIn(formData);
+        }
+      }}
+    >
       <div className="space-y-1">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -26,7 +42,7 @@ export default function AuthForm({ type }: { type: string }) {
         />
       </div>
 
-      <Button>{type === "signup" ? "Sign up" : "Sign in"}</Button>
+      <Button>{type === "signUp" ? "Sign up" : "Sign in"}</Button>
     </form>
   );
 }

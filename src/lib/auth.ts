@@ -2,6 +2,7 @@ import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "./prisma";
 import bcrypt from "bcryptjs";
+import { authFormSchema } from "./zod";
 
 export const {
   handlers: { GET, POST },
@@ -13,7 +14,14 @@ export const {
     Credentials({
       //runs on every login attempt
       authorize: async (credentials) => {
-        const { email, password } = credentials;
+        //validation
+        const validatedCredentials = authFormSchema.safeParse(credentials);
+
+        if (!validatedCredentials.success) {
+          return null;
+        }
+
+        const { email, password } = validatedCredentials.data;
 
         //fetch user from db
         const existingUser = await prisma.user.findUnique({

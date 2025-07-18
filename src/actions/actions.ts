@@ -4,7 +4,7 @@ import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { checkAuth } from "@/lib/server-utils";
 import { sleep } from "@/lib/utils";
-import { petFormSchema, petIdSchema } from "@/lib/zod";
+import { authFormSchema, petFormSchema, petIdSchema } from "@/lib/zod";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
@@ -187,7 +187,16 @@ export async function checkoutPet(petId: unknown) {
 
 /*--------------- USER ACTIONS ------------------- */
 
-export async function logIn(formData: FormData) {
+export async function logIn(formData: unknown) {
+  //we set type unknown because we do not know what kind of data we are going to receive
+  if (!(formData instanceof FormData)) {
+    return {
+      message: "Invalid form data",
+    };
+  }
+
+  //for sign in, we did zod schema validation in the auth.ts file. It does not matter if we do it there or in the server action here
+
   await signIn("credentials", formData);
 }
 
@@ -197,9 +206,29 @@ export async function logOut() {
   });
 }
 
-export async function signUp(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+export async function signUp(formData: unknown) {
+  //check if the data we received is of FormData
+  if (!(formData instanceof FormData)) {
+    return {
+      message: "Invalid form data",
+    };
+  }
+
+  //validate the data using zod schema
+
+  //converting formData object to a javascript object because the zod schema expects a normal object
+  const convertedFormData = Object.fromEntries(formData.entries());
+
+  //validation
+  const validatedFormData = authFormSchema.safeParse(convertedFormData);
+
+  if (!validatedFormData.success) {
+    return {
+      message: "Invalid form data",
+    };
+  }
+
+  const { email, password } = validatedFormData.data;
 
   //check if a user with email already exists
   const existingUser = await prisma.user.findUnique({
@@ -210,7 +239,7 @@ export async function signUp(formData: FormData) {
 
   if (existingUser) {
     return {
-      message: "User with that email address already exisits",
+      message: "A user with email address already exists",
     };
   }
 
