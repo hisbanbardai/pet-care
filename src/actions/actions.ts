@@ -222,6 +222,9 @@ export async function logIn(
 }
 
 export async function logOut() {
+  //to mimic production like delay
+  await sleep(1000);
+
   await signOut({
     redirectTo: "/",
   });
