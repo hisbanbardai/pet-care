@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { checkAuth } from "@/lib/server-utils";
 import { sleep } from "@/lib/utils";
 import { authFormSchema, petFormSchema, petIdSchema } from "@/lib/zod";
+import { Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
@@ -188,6 +189,9 @@ export async function checkoutPet(petId: unknown) {
 /*--------------- USER ACTIONS ------------------- */
 
 export async function logIn(formData: unknown) {
+  //to mimic production like delay
+  await sleep(1000);
+
   //we set type unknown because we do not know what kind of data we are going to receive
   if (!(formData instanceof FormData)) {
     throw new Error("Invalid form data");
@@ -205,6 +209,9 @@ export async function logOut() {
 }
 
 export async function signUp(formData: unknown) {
+  //to mimic production like delay
+  await sleep(1000);
+
   //check if the data we received is of FormData
   if (!(formData instanceof FormData)) {
     throw new Error("Invalid form data");
@@ -225,16 +232,16 @@ export async function signUp(formData: unknown) {
   const { email, password } = validatedFormData.data;
 
   try {
-    //check if a user with email already exists
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+    //check if a user with email already exists (check not needed because we are checking prisma error code for already exisiting email in the catch block)
+    // const existingUser = await prisma.user.findUnique({
+    //   where: {
+    //     email,
+    //   },
+    // });
 
-    if (existingUser) {
-      throw new Error("A user with email address already exists");
-    }
+    // if (existingUser) {
+    //   throw new Error("A user with email address already exists");
+    // }
 
     //hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -246,16 +253,23 @@ export async function signUp(formData: unknown) {
         password: hashedPassword,
       },
     });
-
-    //log in the new created user so that next auth will generate the cookie for us
   } catch (error) {
     console.error(error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return {
+          message: "Email already exists",
+        };
+      }
+    }
     return {
       error,
-      message: "Could not sign up",
+      message: "Unable to create a user",
     };
   }
 
+  //log in the new created user so that next auth will generate the cookie for us
   //sign in the user after successful creation of the account
   await signIn("credentials", formData);
 }
