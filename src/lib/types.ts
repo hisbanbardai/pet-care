@@ -9,6 +9,6 @@ export type TPet = {
   notes: string;
 };
 
-export type TPetPrisma = Omit<Pet, "id" | "createdAt" | "updatedAt">;
+export type TPetPrisma = Omit<Pet, "id" | "createdAt" | "updatedAt" | "userId">;
 
 export type actionType = "add" | "edit" | "checkout";
