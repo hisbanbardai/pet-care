@@ -190,9 +190,7 @@ export async function checkoutPet(petId: unknown) {
 export async function logIn(formData: unknown) {
   //we set type unknown because we do not know what kind of data we are going to receive
   if (!(formData instanceof FormData)) {
-    return {
-      message: "Invalid form data",
-    };
+    throw new Error("Invalid form data");
   }
 
   //for sign in, we did zod schema validation in the auth.ts file. It does not matter if we do it there or in the server action here
@@ -209,9 +207,7 @@ export async function logOut() {
 export async function signUp(formData: unknown) {
   //check if the data we received is of FormData
   if (!(formData instanceof FormData)) {
-    return {
-      message: "Invalid form data",
-    };
+    throw new Error("Invalid form data");
   }
 
   //validate the data using zod schema
@@ -223,37 +219,43 @@ export async function signUp(formData: unknown) {
   const validatedFormData = authFormSchema.safeParse(convertedFormData);
 
   if (!validatedFormData.success) {
-    return {
-      message: "Invalid form data",
-    };
+    throw new Error("Invalid form data");
   }
 
   const { email, password } = validatedFormData.data;
 
-  //check if a user with email already exists
-  const existingUser = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  try {
+    //check if a user with email already exists
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
 
-  if (existingUser) {
+    if (existingUser) {
+      throw new Error("A user with email address already exists");
+    }
+
+    //hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    //create new user
+    await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    //log in the new created user so that next auth will generate the cookie for us
+  } catch (error) {
+    console.error(error);
     return {
-      message: "A user with email address already exists",
+      error,
+      message: "Could not sign up",
     };
   }
 
-  //hash password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  //create new user
-  await prisma.user.create({
-    data: {
-      email,
-      password: hashedPassword,
-    },
-  });
-
-  //log in the new created user so that next auth will generate the cookie for us
+  //sign in the user after successful creation of the account
   await signIn("credentials", formData);
 }
