@@ -7,6 +7,7 @@ import { sleep } from "@/lib/utils";
 import { authFormSchema, petFormSchema, petIdSchema } from "@/lib/zod";
 import { Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 
 /*--------------- PET ACTIONS ------------------- */
@@ -188,18 +189,36 @@ export async function checkoutPet(petId: unknown) {
 
 /*--------------- USER ACTIONS ------------------- */
 
-export async function logIn(formData: unknown) {
+export async function logIn(
+  currentState: { message: string } | undefined,
+  formData: unknown
+) {
   //to mimic production like delay
   await sleep(1000);
 
   //we set type unknown because we do not know what kind of data we are going to receive
   if (!(formData instanceof FormData)) {
-    throw new Error("Invalid form data");
+    return {
+      message: "Invalid form data",
+    };
   }
 
   //for sign in, we did zod schema validation in the auth.ts file. It does not matter if we do it there or in the server action here
 
-  await signIn("credentials", formData);
+  try {
+    await signIn("credentials", formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      if (error.type === "CredentialsSignin") {
+        return {
+          message: "Invalid credentials",
+        };
+      }
+    }
+    return {
+      message: "Unable to sign in",
+    };
+  }
 }
 
 export async function logOut() {
@@ -208,7 +227,10 @@ export async function logOut() {
   });
 }
 
-export async function signUp(formData: unknown) {
+export async function signUp(
+  currentState: { message: string } | undefined,
+  formData: unknown
+) {
   //to mimic production like delay
   await sleep(1000);
 

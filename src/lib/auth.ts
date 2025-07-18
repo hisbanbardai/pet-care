@@ -37,7 +37,7 @@ export const {
         }
 
         //match passwords
-        const isPasswordSame = bcrypt.compare(
+        const isPasswordSame = await bcrypt.compare(
           password as string,
           existingUser.password
         );
