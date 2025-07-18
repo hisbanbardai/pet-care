@@ -215,9 +215,9 @@ export async function logIn(
         };
       }
     }
-    return {
-      message: "Unable to sign in",
-    };
+
+    //after signing in, nextJS automatically redirects and to make the redirect work nextJS throws an error so we have to make sure that we manually throw the error otherwise it will be stuck in the catch block
+    throw error;
   }
 }
 
