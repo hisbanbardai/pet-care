@@ -35,7 +35,7 @@ export default function PaymentPage({
       )}
 
       {success && (
-        <h1 className="text-green-500 font-semibold text-lg mt-3">
+        <h1 className="text-green-700 font-semibold text-lg mt-3">
           Payment successful! You now have lifetime access to PetCare <br />
           <p className="text-center">&#x2713;</p>
         </h1>

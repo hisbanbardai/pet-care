@@ -107,7 +107,7 @@ export const {
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
 
-    //Auth.js libraries only expose a subset of the user’s information by default in a session to not accidentally expose sensitive user information. This is name, email, and image. To resolve this issue we attach the user id in jwt callback.
+    //Auth.js libraries only expose a subset of the user’s information by default in a session to not accidentally expose sensitive user information. This is name, email, and image. To resolve this issue we attach the user id in jwt callback. jwt callback runs when the token is created
     //NOTE: We do not have to explicitly attach the user id to token object in jwt callback because it already is present inside the object but with an unusual key name "sub" that is why for our convenience, below we added userId to the token object
     jwt: async ({ token }) => {
       // console.log("jwt token", token);
