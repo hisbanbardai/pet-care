@@ -64,7 +64,14 @@ export const {
       const isLoggedIn = Boolean(auth?.user);
 
       if (isLoggedIn && !isAccessingApp) {
-        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+        if (
+          request.nextUrl.pathname.includes("/signin") ||
+          request.nextUrl.pathname.includes("/signup")
+        ) {
+          return Response.redirect(new URL("/payment", request.nextUrl));
+        }
+        // return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+        return true;
       }
 
       if ((isAccessingApp && isLoggedIn) || !isAccessingApp) {
@@ -92,8 +99,8 @@ export const {
         return callbackUrlParam; // Return the specific callbackUrl from the query
       }
 
-      if (url.includes("signin")) {
-        return baseUrl + "/app/dashboard";
+      if (url.includes("signin") || url.includes("signup")) {
+        return baseUrl + "/payment";
       }
 
       // Fallback to default behavior if no specific callbackUrl is found
