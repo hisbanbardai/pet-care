@@ -3,12 +3,15 @@
 import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { checkAuth } from "@/lib/server-utils";
+import { stripe } from "@/lib/stripe";
 import { sleep } from "@/lib/utils";
 import { authFormSchema, petFormSchema, petIdSchema } from "@/lib/zod";
 import { Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 /*--------------- PET ACTIONS ------------------- */
 
@@ -298,3 +301,33 @@ export async function signUp(
   //sign in the user after successful creation of the account
   await signIn("credentials", formData);
 }
+
+/*--------------- PAYMENT ACTIONS ------------------- */
+//When user will click on buy access button on payment page on the client side, the server action below will run on the server and create a stripe checkout session using stripe library which in return will give us redirect url to the stripe platform payment page. After the payment is done user will come back to the payment page
+
+export const createCheckoutSession = async function () {
+  //get the origin
+  const headersList = await headers();
+  const origin = headersList.get("origin");
+
+  //authentication check
+  const session = await checkAuth();
+
+  //create checkout session
+  const checkoutSession = await stripe.checkout.sessions.create({
+    customer_email: session.user?.email as string,
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, price_1234) of the product you want to sell
+        price: process.env.STRIPE_PRICE_ID,
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `${origin}/payment?success=true`,
+    cancel_url: `${origin}/payment?canceled=true`,
+  });
+
+  //redirect user
+  redirect(checkoutSession.url!);
+};
