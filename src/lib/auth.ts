@@ -47,6 +47,8 @@ export const {
           return null;
         }
 
+        // console.log("existing user", existingUser);
+
         return existingUser;
       },
     }),
@@ -107,18 +109,36 @@ export const {
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
 
-    //Auth.js libraries only expose a subset of the user’s information by default in a session to not accidentally expose sensitive user information. This is name, email, and image. To resolve this issue we attach the user id in jwt callback. jwt callback runs when the token is created
+    //Auth.js libraries only expose a subset of the user’s information by default in a session to not accidentally expose sensitive user information. This is name, email, and image. To resolve this issue we attach the user id in jwt callback.
+    // This callback is called whenever a JSON Web Token is created (i.e. at sign in) or updated (i.e whenever a session is accessed in the client). The returned value will be encrypted, and it is stored in a cookie.
+    //The JWT callback runs twice when user signs in, first it will create the token where we will also have access to the user (we can attach whatever we want to the token object from user), and second it will run to create the session but this time we will not have access to the user object, it will be undefined
+    /* 
+    [Sign in]
+        ↓
+    [JWT callback] — with user → create token
+        ↓
+    [JWT callback] — no user → read token
+        ↓
+    [Session callback] — uses token → build session
+    */
     //NOTE: We do not have to explicitly attach the user id to token object in jwt callback because it already is present inside the object but with an unusual key name "sub" that is why for our convenience, below we added userId to the token object
-    jwt: async ({ token }) => {
-      // console.log("jwt token", token);
-      token.userId = token.sub;
+    jwt: async ({ token, user }) => {
+      // console.log("jwt callback");
+      if (user) {
+        token.userId = user.id;
+        token.hasPaid = user.hasPaid;
+      }
+
       return token;
     },
 
     //Below session callback will run everytime we try to access a session on client or server side and as we discovered that by default auth js does not put sensitive information like user id in the session object, we have to do it ourselves like we are doing it below. We take the userId from the token object that we put in the jwt callback and add it to the session object
     session: async ({ session, token }) => {
-      // console.log("auth ke andar", session);
-      session.user.id = token.userId as string;
+      // console.log("session callback");
+      if (session.user) {
+        session.user.id = token.userId;
+        session.user.hasPaid = token.hasPaid;
+      }
 
       return session;
     },

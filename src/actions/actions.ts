@@ -46,7 +46,7 @@ export async function addPet(newPet: unknown) {
         ...validatedPet.data,
         user: {
           connect: {
-            id: session.user?.id,
+            id: session.user.id,
           },
         },
       },
