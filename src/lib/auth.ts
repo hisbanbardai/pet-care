@@ -65,18 +65,32 @@ export const {
       //In auth object, we will receive whatever we return from the authorize function of credentials provider
       const isLoggedIn = Boolean(auth?.user);
 
-      if (isLoggedIn && !isAccessingApp) {
-        if (
-          request.nextUrl.pathname.includes("/signin") ||
-          request.nextUrl.pathname.includes("/signup")
-        ) {
-          return Response.redirect(new URL("/payment", request.nextUrl));
-        }
-        // return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+      if (!isLoggedIn && isAccessingApp) {
+        return false;
+      }
+
+      if (isLoggedIn && isAccessingApp && !auth?.user.hasPaid) {
+        return Response.redirect(new URL("/payment", request.nextUrl));
+      }
+
+      if (isLoggedIn && isAccessingApp && auth?.user.hasPaid) {
         return true;
       }
 
-      if ((isAccessingApp && isLoggedIn) || !isAccessingApp) {
+      if (isLoggedIn && !isAccessingApp) {
+        if (
+          (request.nextUrl.pathname.includes("/signin") ||
+            request.nextUrl.pathname.includes("/signup") ||
+            request.nextUrl.pathname === "/") &&
+          !auth?.user.hasPaid
+        ) {
+          return Response.redirect(new URL("/payment", request.url));
+        }
+
+        return true;
+      }
+
+      if (!isLoggedIn && !isAccessingApp) {
         return true;
       }
 
@@ -88,18 +102,18 @@ export const {
       // console.log("BASEURL", baseUrl);
 
       //in the case of sign out action where we are redirecting user to home page
-      if (url.startsWith("/")) {
-        return baseUrl + url;
-      }
+      // if (url.startsWith("/")) {
+      //   return baseUrl + url;
+      // }
 
       //check if there is a callbackurl parameter in the url
-      const urlObj = new URL(url);
-      const callbackUrlParam = urlObj.searchParams.get("callbackUrl");
+      // const urlObj = new URL(url);
+      // const callbackUrlParam = urlObj.searchParams.get("callbackUrl");
       // console.log("CALLBACKURL", callbackUrlParam);
 
-      if (callbackUrlParam) {
-        return callbackUrlParam; // Return the specific callbackUrl from the query
-      }
+      // if (callbackUrlParam) {
+      //   return callbackUrlParam; // Return the specific callbackUrl from the query
+      // }
 
       if (url.includes("signin") || url.includes("signup")) {
         return baseUrl + "/payment";
