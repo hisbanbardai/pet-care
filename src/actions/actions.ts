@@ -303,7 +303,7 @@ export async function signUp(
 }
 
 /*--------------- PAYMENT ACTIONS ------------------- */
-//When user will click on buy access button on payment page on the client side, the server action below will run on the server and create a stripe checkout session using stripe library which in return will give us redirect url to the stripe platform payment page. After the payment is done user will come back to the payment page
+//When user will click on buy access button on payment page on the client side, the server action below will run on the server and create a stripe checkout session using stripe library which in return will give us redirect url to the stripe platform payment page. After the payment is done user will come back to our client payment page
 
 export const createCheckoutSession = async function () {
   //get the origin
