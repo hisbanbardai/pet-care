@@ -54,7 +54,8 @@ export async function POST(req: Request) {
       }
 
       /*
-      NOTE: After we have successfully paid and the checkout session is completed and we have updated the hasPaid field in the database, inside the jwt token the hasPaid property that we added manually in the jwt callback in auth.ts will still be false because the token is only created once
+      NOTE: After we have successfully paid and the checkout session is completed and we have updated the hasPaid field in the database, inside the jwt token the hasPaid property that we added manually in the jwt callback in auth.ts will still be false because the token is only created once at the time of sign in and whatever user information we need to attach to it we do it at that time. 
+      To update the token manually we need to call update function from useSession() at client side because this will trigger the jwt callback in the next-auth 
       */
 
       console.log(
