@@ -145,6 +145,7 @@ export const {
         token.hasPaid = user.hasPaid;
       }
 
+      //when we call update from useSession() on the client side, it will call this trigger and here we would update the token manually and give it back to the client
       if (trigger === "update") {
         const existingUser = await prisma.user.findUnique({
           where: {

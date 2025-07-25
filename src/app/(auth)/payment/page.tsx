@@ -15,7 +15,7 @@ export default function PaymentPage({
 
   const { success, canceled } = React.use(searchParams);
   const [isPending, startTransition] = useTransition();
-  const { update } = useSession();
+  const { data: session, update, status } = useSession();
   const router = useRouter();
 
   return (
@@ -46,9 +46,12 @@ export default function PaymentPage({
           </h1>
           <Button
             onClick={async () => {
+              //we are using update from useSession to tell the server to get the updated user data from db, update the token and session and give it back to the client
               await update(true);
               router.push("/app/dashboard");
             }}
+            //disable the button when the request to update the jwt token is still in progress i.e. "loading" or when user already has paid which means he already has access to the app
+            disabled={status === "loading" || session?.user.hasPaid}
           >
             Access PetCare
           </Button>
