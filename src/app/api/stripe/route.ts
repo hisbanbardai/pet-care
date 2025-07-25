@@ -1,3 +1,4 @@
+import prisma from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -10,7 +11,8 @@ export async function POST(req: Request) {
 
   const signature = req.headers.get("stripe-signature");
 
-  let event: Stripe.Event;
+  //we have to assign undefined to below event variable otherwise typescript would think we have only defined it but not assigned anything to it hence it will give red squiggly line in the switch statement below where we use event
+  let event: Stripe.Event | undefined = undefined;
 
   try {
     event = stripe.webhooks.constructEvent(
@@ -19,23 +21,51 @@ export async function POST(req: Request) {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (err) {
-    console.error(`Webhook Error: ${err.message}`);
-    return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
-      { status: 400 }
-    );
+    if (err instanceof Stripe.errors.StripeError) {
+      console.error(`Webhook Error: ${err.message}`);
+      return NextResponse.json(
+        { error: `Webhook Error: ${err.message}` },
+        { status: 400 }
+      );
+    } else if (err instanceof Error) {
+      return NextResponse.json(
+        { error: `An error occurred: ${err.message}` },
+        { status: 500 }
+      );
+    }
   }
 
   // Handle different event types
-  switch (event.type) {
+  switch (event?.type) {
     case "checkout.session.completed":
       const checkoutSession = event.data.object as Stripe.Checkout.Session;
       // Handle successful checkout, e.g., update database
-      console.log("Checkout session completed:", checkoutSession.id);
+
+      //if there is customer email in the checkout session
+      if (checkoutSession.customer_email) {
+        await prisma.user.update({
+          data: {
+            hasPaid: true,
+          },
+          where: {
+            email: checkoutSession.customer_email,
+          },
+        });
+      }
+
+      /*
+      NOTE: After we have successfully paid and the checkout session is completed and we have updated the hasPaid field in the database, inside the jwt token the hasPaid property that we added manually in the jwt callback in auth.ts will still be false because the token is only created once
+      */
+
+      console.log(
+        "Checkout session completed:",
+        checkoutSession.id,
+        checkoutSession.customer_email
+      );
       break;
     // Add more cases for other event types you want to handle
     default:
-      console.log(`Unhandled event type ${event.type}`);
+      console.log(`Unhandled event type ${event?.type}`);
   }
 
   return NextResponse.json({ received: true }, { status: 200 });
