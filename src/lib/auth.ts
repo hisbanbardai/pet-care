@@ -77,6 +77,18 @@ export const {
         return true;
       }
 
+      if (
+        isLoggedIn &&
+        !isAccessingApp &&
+        auth?.user.hasPaid &&
+        (request.nextUrl.pathname === "/" ||
+          request.nextUrl.pathname.includes("/signin") ||
+          request.nextUrl.pathname.includes("/signup") ||
+          request.nextUrl.pathname.includes("/payment"))
+      ) {
+        return Response.redirect(new URL("/app/dashboard", request.url));
+      }
+
       if (isLoggedIn && !isAccessingApp) {
         if (
           (request.nextUrl.pathname.includes("/signin") ||
@@ -90,6 +102,14 @@ export const {
         return true;
       }
 
+      if (
+        !isLoggedIn &&
+        !isAccessingApp &&
+        request.nextUrl.pathname.includes("payment")
+      ) {
+        return Response.redirect(new URL("/signin", request.url));
+      }
+
       if (!isLoggedIn && !isAccessingApp) {
         return true;
       }
@@ -97,31 +117,31 @@ export const {
       return false;
     },
 
-    redirect: async ({ url, baseUrl }) => {
-      // console.log("URL", url);
-      // console.log("BASEURL", baseUrl);
+    // redirect: async ({ url, baseUrl }) => {
+    //   // console.log("URL", url);
+    //   // console.log("BASEURL", baseUrl);
 
-      //in the case of sign out action where we are redirecting user to home page
-      // if (url.startsWith("/")) {
-      //   return baseUrl + url;
-      // }
+    //   //in the case of sign out action where we are redirecting user to home page
+    //   // if (url.startsWith("/")) {
+    //   //   return baseUrl + url;
+    //   // }
 
-      //check if there is a callbackurl parameter in the url
-      // const urlObj = new URL(url);
-      // const callbackUrlParam = urlObj.searchParams.get("callbackUrl");
-      // console.log("CALLBACKURL", callbackUrlParam);
+    //   //check if there is a callbackurl parameter in the url
+    //   // const urlObj = new URL(url);
+    //   // const callbackUrlParam = urlObj.searchParams.get("callbackUrl");
+    //   // console.log("CALLBACKURL", callbackUrlParam);
 
-      // if (callbackUrlParam) {
-      //   return callbackUrlParam; // Return the specific callbackUrl from the query
-      // }
+    //   // if (callbackUrlParam) {
+    //   //   return callbackUrlParam; // Return the specific callbackUrl from the query
+    //   // }
 
-      if (url.includes("signin") || url.includes("signup")) {
-        return baseUrl + "/payment";
-      }
+    //   if (url.includes("signin") || url.includes("signup")) {
+    //     return baseUrl + "/payment";
+    //   }
 
-      // Fallback to default behavior if no specific callbackUrl is found
-      return url.startsWith(baseUrl) ? url : baseUrl;
-    },
+    //   // Fallback to default behavior if no specific callbackUrl is found
+    //   return url.startsWith(baseUrl) ? url : baseUrl;
+    // },
 
     //Auth.js libraries only expose a subset of the user’s information by default in a session to not accidentally expose sensitive user information. This is name, email, and image. To resolve this issue we attach the user id in jwt callback.
     // This callback is called whenever a JSON Web Token is created (i.e. at sign in) or updated (i.e whenever a session is accessed in the client). The returned value will be encrypted, and it is stored in a cookie.

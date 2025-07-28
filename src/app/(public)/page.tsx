@@ -1,5 +1,5 @@
 import Image from "next/image";
-import image from "../../../public/petsoft-preview.png";
+import image from "../../../public/petcare-dashboard-preview.png";
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

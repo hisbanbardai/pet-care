@@ -47,6 +47,9 @@ export default function PaymentPage({
           <Button
             onClick={async () => {
               //we are using update from useSession to tell the server to get the updated user data from db, update the token and session and give it back to the client
+              //NOTE: JWT token contains user information that we want to store and lives on the client side in a browser. So if we change anything in the database of that user info, the token on the client side will not get updated automatically with that info. We would need to tell the server that we need to update the token and session, then server would go to database get the updated info of that user, attach it to the token, generate a new jwt token and will give it back to the client
+              //In our case we need to update the hasPaid field to true in the database and add that field in the token and from token to session object
+
               await update(true);
               router.push("/app/dashboard");
             }}

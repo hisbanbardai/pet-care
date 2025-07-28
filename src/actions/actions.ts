@@ -30,7 +30,7 @@ export async function addPet(newPet: unknown) {
   const session = await checkAuth();
 
   try {
-    await sleep(1000);
+    // await sleep(1000);
 
     const validatedPet = petFormSchema.safeParse(newPet);
 
@@ -58,6 +58,7 @@ export async function addPet(newPet: unknown) {
     };
   }
 
+  //to re-render a certain part of the app
   revalidatePath("/", "layout");
 }
 
@@ -69,7 +70,7 @@ export async function editPet(petId: unknown, updatedPet: unknown) {
   const session = await checkAuth();
 
   try {
-    await sleep(1000);
+    // await sleep(1000);
 
     //validation of data
     const validatedPet = petFormSchema.safeParse(updatedPet);
@@ -139,7 +140,7 @@ export async function checkoutPet(petId: unknown) {
   const session = await checkAuth();
 
   try {
-    await sleep(1000);
+    // await sleep(1000);
 
     //validation of data
     const validatePetId = petIdSchema.safeParse(petId);
@@ -197,7 +198,7 @@ export async function logIn(
   formData: unknown
 ) {
   //to mimic production like delay
-  await sleep(1000);
+  // await sleep(1000);
 
   //we set type unknown because we do not know what kind of data we are going to receive
   if (!(formData instanceof FormData)) {
@@ -209,7 +210,20 @@ export async function logIn(
   //for sign in, we did zod schema validation in the auth.ts file. It does not matter if we do it there or in the server action here
 
   try {
-    await signIn("credentials", formData);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: email as string,
+      },
+    });
+
+    await signIn("credentials", {
+      redirectTo: existingUser?.hasPaid ? "/app/dashboard" : "/payment",
+      email,
+      password,
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       if (error.type === "CredentialsSignin") {
@@ -226,7 +240,7 @@ export async function logIn(
 
 export async function logOut() {
   //to mimic production like delay
-  await sleep(1000);
+  // await sleep(1000);
 
   await signOut({
     redirectTo: "/",
@@ -238,7 +252,7 @@ export async function signUp(
   formData: unknown
 ) {
   //to mimic production like delay
-  await sleep(1000);
+  // await sleep(1000);
 
   //check if the data we received is of FormData
   if (!(formData instanceof FormData)) {
@@ -299,7 +313,7 @@ export async function signUp(
 
   //log in the new created user so that next auth will generate the cookie for us
   //sign in the user after successful creation of the account
-  await signIn("credentials", formData);
+  await signIn("credentials", { redirectTo: "/payment", email, password });
 }
 
 /*--------------- PAYMENT ACTIONS ------------------- */
