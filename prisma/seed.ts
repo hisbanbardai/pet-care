@@ -11,7 +11,8 @@ const userData: Prisma.UserCreateInput = {
       {
         name: "Benjamin",
         ownerName: "John Doe",
-        imageUrl: "https://bytegrad.com/course-assets/images/rn-image-4.png",
+        imageUrl:
+          "https://ik.imagekit.io/jcpg0deps/PetCare/pet-1.png?updatedAt=1753810934327",
         age: 2,
         notes:
           "Doesn't like to be touched on the belly. Plays well with other dogs.",
@@ -19,14 +20,16 @@ const userData: Prisma.UserCreateInput = {
       {
         name: "Richard",
         ownerName: "Josephine Dane",
-        imageUrl: "https://bytegrad.com/course-assets/images/rn-image-5.png",
+        imageUrl:
+          "https://ik.imagekit.io/jcpg0deps/PetCare/pet-2.png?updatedAt=1753811055159",
         age: 5,
         notes: "Needs medication twice a day.",
       },
       {
         name: "Anna",
         ownerName: "Frank Doe",
-        imageUrl: "https://bytegrad.com/course-assets/images/rn-image-6.png",
+        imageUrl:
+          "https://ik.imagekit.io/jcpg0deps/PetCare/pet-3.png?updatedAt=1753811103384",
         age: 4,
         notes: "Allergic to chicken.",
       },

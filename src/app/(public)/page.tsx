@@ -17,7 +17,7 @@ export default function HomePage() {
         </h1>
         <p className="max-w-[600px] text-2xl font-medium">
           Use PetCare to easily keep track of pets under your care. Get lifetime
-          access for $299.
+          access for $99.
         </p>
         <div className="mt-10 space-x-3">
           <Button asChild>

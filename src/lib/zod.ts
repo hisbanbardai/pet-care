@@ -25,7 +25,7 @@ export const petFormSchema = z
     ...data,
     imageUrl:
       data.imageUrl ||
-      "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+      "https://ik.imagekit.io/jcpg0deps/PetCare/pet-placeholder.png?updatedAt=1753811510470",
   }));
 
 export type TPetFormSchema = z.infer<typeof petFormSchema>;
