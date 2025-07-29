@@ -51,7 +51,7 @@ export default function PetForm({
   //     ownerName: formData.get("ownerName") as string,
   //     imageUrl:
   //       (formData.get("imageUrl") as string) ||
-  //       "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+  //       "https://bg.com/course-assets/react-nextjs/pet-placeholder.png",
   //     age: +(formData.get("age") as string),
   //     notes: formData.get("notes") as string,
   //   };
@@ -118,7 +118,7 @@ export default function PetForm({
     //   ownerName: formData.get("ownerName") as string,
     //   imageUrl:
     //     (formData.get("imageUrl") as string) ||
-    //     "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+    //     "https://bg.com/course-assets/react-nextjs/pet-placeholder.png",
     //   age: parseInt(formData.get("age") as string),
     //   notes: formData.get("notes") as string,
     // };

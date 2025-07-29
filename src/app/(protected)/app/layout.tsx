@@ -14,7 +14,7 @@ export default async function ProtectedPagesLayout({
   children: React.ReactNode;
 }) {
   // const response = await fetch(
-  //   "https://bytegrad.com/course-assets/projects/petsoft/api/pets"
+  //   "https://bg.com/course-assets/projects/petsoft/api/pets"
   // );
 
   // if (!response.ok) {

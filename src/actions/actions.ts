@@ -4,7 +4,6 @@ import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { checkAuth } from "@/lib/server-utils";
 import { stripe } from "@/lib/stripe";
-import { sleep } from "@/lib/utils";
 import { authFormSchema, petFormSchema, petIdSchema } from "@/lib/zod";
 import { Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
