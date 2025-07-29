@@ -135,9 +135,9 @@ export const {
     //   //   return callbackUrlParam; // Return the specific callbackUrl from the query
     //   // }
 
-    //   if (url.includes("signin") || url.includes("signup")) {
-    //     return baseUrl + "/payment";
-    //   }
+    //   // if (url.includes("signin") || url.includes("signup")) {
+    //   //   return baseUrl + "/payment";
+    //   // }
 
     //   // Fallback to default behavior if no specific callbackUrl is found
     //   return url.startsWith(baseUrl) ? url : baseUrl;

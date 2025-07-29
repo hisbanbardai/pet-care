@@ -212,6 +212,7 @@ export async function logIn(
   try {
     const email = formData.get("email");
     const password = formData.get("password");
+    const callbackUrl = formData.get("callbackUrl") as string;
 
     const existingUser = await prisma.user.findUnique({
       where: {
@@ -219,8 +220,24 @@ export async function logIn(
       },
     });
 
+    let redirectTo;
+
+    if (existingUser?.hasPaid && callbackUrl) {
+      redirectTo = callbackUrl;
+    }
+
+    if (existingUser?.hasPaid && !callbackUrl) {
+      redirectTo = "/app/dashboard";
+    }
+
+    if (!existingUser?.hasPaid) {
+      redirectTo = "/payment";
+    }
+
+    // console.log("redirectTo", redirectTo);
+
     await signIn("credentials", {
-      redirectTo: existingUser?.hasPaid ? "/app/dashboard" : "/payment",
+      redirectTo: redirectTo,
       email,
       password,
     });

@@ -8,9 +8,10 @@ import { useActionState } from "react";
 
 type AuthFormProps = {
   type: "signin" | "signUp";
+  callbackUrl: string;
 };
 
-export default function AuthForm({ type }: AuthFormProps) {
+export default function AuthForm({ type, callbackUrl }: AuthFormProps) {
   //useActionState is a Hook that allows you to update state based on the result of a form action. Whatever we return from the server actions can be accessed by below signUpState and signInState variables
 
   const initialState = {
@@ -46,6 +47,7 @@ export default function AuthForm({ type }: AuthFormProps) {
           required
         />
       </div>
+      <input type="hidden" name="callbackUrl" value={callbackUrl || ""} />
 
       <AuthFormSubmitBtn type={type} />
 
