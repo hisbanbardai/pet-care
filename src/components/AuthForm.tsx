@@ -8,7 +8,7 @@ import { useActionState } from "react";
 
 type AuthFormProps = {
   type: "signin" | "signUp";
-  callbackUrl: string;
+  callbackUrl?: string;
 };
 
 export default function AuthForm({ type, callbackUrl }: AuthFormProps) {
